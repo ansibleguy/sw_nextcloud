@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_nextcloud
+
+[nextcloud]
+backend = auto
+enabled = true
+port = {{ NC_CONFIG.apache.site.port_plain }},{{ NC_CONFIG.apache.site.port_ssl }}
+protocol = tcp
+filter = nextcloud
+maxretry = 3
+bantime = 86400
+findtime = 43200
+logpath = {{ NC_CONFIG.fail2ban.path_log }}/nextcloud.log

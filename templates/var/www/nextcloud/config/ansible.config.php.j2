@@ -1,0 +1,54 @@
+; {{ ansible_managed }}
+; ansibleguy.sw_nextcloud
+
+<?php
+$CONFIG = array (
+  'trusted_domains' => [
+    'localhost',
+    '{{ NC_CONFIG.apache.site.domain }}',
+{% if 'aliases' in NC_CONFIG.apache.site %}
+{%   for alias in NC_CONFIG.apache.site.aliases %}
+    '{{ alias }}',
+{%   endfor %}
+{% endif %}
+{% if 'ip' in NC_CONFIG.apache.site %}
+    '{{ NC_CONFIG.apache.site.ip }}',
+{% endif %}
+  ],
+  'datadirectory' => '{{ NC_CONFIG.settings.path_data }}',
+  'dbtype' => 'mysql',
+  'dbname' => '{{ NC_CONFIG.database.name }}',
+  'dbhost' => 'localhost',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => '{{ NC_CONFIG.database.user }}',
+  'dbpassword' => '{{ NC_CONFIG.database.pwd }}',
+
+  'memcache.local' => '\OC\Memcache\Redis',
+  'memcache.distributed' => '\OC\Memcache\Redis',
+  'memcache.locking' => '\OC\Memcache\Redis',
+  'redis' => [
+    'host' => '{{ NC_CONFIG.redis.host }}',
+    'port' => {{ NC_CONFIG.redis.port }},
+    'password' => '{{ NC_CONFIG.redis.pwd }}',
+  ],
+
+{% for s, v in NC_CONFIG.settings.items() %}
+{%   if s not in SETTING_GRAYLIST and v not in NONE_VALUES %}
+{%     if v in ['true', 'false'] %}
+  '{{ s }}' => {{ v }},
+{%     else %}
+  '{{ s }}' => '{{ v }}',
+{%     endif %}
+{%   endif %}
+{% endfor %}
+
+{% for s, v in NC_HC.nc_secure_settings.items() %}
+{%   if s not in NC_CONFIG.settings %}
+{%     if v in ['true', 'false'] %}
+  '{{ s }}' => {{ v }},
+{%     else %}
+  '{{ s }}' => '{{ v }}',
+{%     endif %}
+{%   endif %}
+{% endfor %}
+);

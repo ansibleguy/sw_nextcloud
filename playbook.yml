@@ -1,0 +1,30 @@
+---
+
+# ansible-playbook -K -D -i inventory/hosts.yml playbook.yml --ask-vault-pass
+
+- hosts: all  # should be limited
+  become: yes
+  gather_facts: yes
+  vars:
+    nextcloud:
+      nginx:
+        domain: 'some.guy.net'
+        aliases: ['other.guy.net']
+        ip: '192.168.24.20'
+
+        ssl:
+          mode: 'self-signed'
+          csr_data:
+            cn: 'NextCloud'
+            country: 'AT'
+            org: 'AnsibleGuy'
+            email: 'nextcloud@template.ansibleguy.net'
+
+      admin_user: 'someguy'
+      admin_mail: 'nextcloud@template.ansibleguy.net'
+      admin_pwd: !vault ...
+
+      # TO BE CONTINUED!
+
+  roles:
+    - ansibleguy.sw_nextcloud

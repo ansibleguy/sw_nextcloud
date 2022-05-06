@@ -1,0 +1,65 @@
+---
+
+- name: NextCloud | Debian | Install | Creating directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ NC_HC.user }}"
+    group: "{{ NC_HC.group }}"
+    mode: 0755
+  loop:
+    - "{{ NC_CONFIG.settings.path_data }}"
+
+- name: NextCloud | Debian | Install | Packages
+  ansible.builtin.apt:
+    name: "{{ NC_HC.packages.base }}"
+    state: present
+
+- name: NextCloud | Debian | Install | PHP
+  ansible.builtin.import_tasks: install_php.yml
+  when: NC_CONFIG.manage.php
+  tags: [php]
+
+- name: NextCloud | Debian | Install | Redis
+  ansible.builtin.apt:
+    name: "{{ NC_HC.packages.redis }}"
+    state: present
+  when: NC_CONFIG.manage.redis
+  tags: [php]
+
+- name: NextCloud | Debian | Install | Tools
+  ansible.builtin.apt:
+    name: "{{ NC_HC.packages.tools }}"
+    state: present
+  when: NC_CONFIG.tools
+
+- name: NextCloud | Debian | Install | Security packages
+  ansible.builtin.apt:
+    name: "{{ NC_HC.packages.security }}"
+    state: present
+  when: NC_CONFIG.security
+
+- name: NextCloud | Debian | Install | Configuring Apache sites
+  ansible.builtin.include_role:
+    name: ansibleguy.infra_apache
+  vars:
+    apache:
+      security: "{{ NC_CONFIG.apache.security }}"
+      modules: "{{ NC_CONFIG.apache.modules }}"
+      headers: "{{ NC_CONFIG.apache.headers }}"
+      sites:
+        nextcloud: "{{ NC_CONFIG.apache.site }}"
+  no_log: true
+  tags: [config]
+  when: NC_CONFIG.manage.webserver
+
+- name: NextCloud | Debian | Install | Setting up MariaDB instance
+  ansible.builtin.include_role:
+    name: ansibleguy.infra_mariadb
+  vars:
+    mariadb:
+      instances:
+        nextcloud: "{{ NC_MARIADB_INSTANCE }}"
+  no_log: true
+  when: NC_CONFIG.manage.db
+  tags: [config, db]

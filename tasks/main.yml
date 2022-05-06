@@ -1,0 +1,22 @@
+---
+
+- name: NextCloud | Checking for needed config
+  ansible.builtin.fail:
+    msg: "The role did not get all the config needed!
+    It needs: 'nextcloud' & 'nextcloud.apache.site.domain'"
+  when:
+    - nextcloud is undefined
+    - "NC_CONFIG.manage.webserver and 'domain' not in NC_CONFIG.apache.site"
+
+- name: NextCloud | Processing debian config
+  ansible.builtin.import_tasks: debian/main.yml
+  when: "ansible_distribution|lower in ['debian', 'ubuntu']"
+
+- name: NextCloud | Cleaning up temporary password files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ tmp_pwd_file_prefix }}_mysql"
+    - "{{ tmp_pwd_file_prefix }}_redis"
+

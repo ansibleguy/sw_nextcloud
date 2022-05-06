@@ -1,0 +1,39 @@
+---
+
+- name: NextCloud | Debian | Config | Setting config to read-only
+  ansible.builtin.file:
+    state: file
+    path: '/var/www/nextcloud/config/ansible.config.php'
+    owner: "{{ NC_HC.user }}"
+    group: "{{ NC_HC.group }}"
+    mode: 0440
+
+- name: NextCloud | Debian | Security | Creating directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    owner: 'root'
+    group: 'root'
+    mode: 0755
+  loop:
+    - "{{ NC_CONFIG.fail2ban.path_log }}"
+    - '/etc/fail2ban/jail.d'
+    - '/etc/fail2ban/filter.d'
+
+- name: NextCloud | Debian | Security | Copying fail2ban config
+  ansible.builtin.template:
+    src: 'templates/etc/fail2ban/{{ item }}.j2'
+    dest: "/etc/fail2ban/{{ item }}"
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+  loop:
+    - 'jail.d/nextcloud.local'
+    - 'filter.d/nextcloud.conf'
+
+- name: NextCloud | Debian | Security | Starting/enabling fail2ban
+  ansible.builtin.systemd:
+    name: 'fail2ban.service'
+    state: started
+    enabled: true
+    daemon_reload: yes

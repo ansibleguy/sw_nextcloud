@@ -1,0 +1,162 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_nextcloud
+
+[PHP]
+engine = On
+short_open_tag = Off
+precision = 14
+output_buffering = Off
+zlib.output_compression = Off
+implicit_flush = Off
+unserialize_callback_func =
+serialize_precision = -1
+open_basedir = {{ NC_CONFIG.apache.serve.path }}/:/dev/urandom
+disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,
+disable_classes =
+zend.enable_gc = On
+expose_php = Off
+max_execution_time = 1800
+max_input_time = 3600
+memory_limit = 512M
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+display_errors = Off
+display_startup_errors = Off
+log_errors = On
+log_errors_max_len = 1024
+ignore_repeated_errors = Off
+ignore_repeated_source = Off
+report_memleaks = On
+html_errors = On
+variables_order = "GPCS"
+request_order = "GP"
+register_argc_argv = Off
+auto_globals_jit = On
+post_max_size = 10240M
+auto_prepend_file =
+auto_append_file =
+default_mimetype = "text/html"
+default_charset = "UTF-8"
+doc_root =
+user_dir =
+enable_dl = Off
+file_uploads = On
+upload_tmp_dir = /upload_tmp
+upload_max_filesize = 10240M
+max_file_uploads = 100
+allow_url_fopen = On
+allow_url_include = Off
+default_socket_timeout = 60
+
+# INSERT BEFORE
+
+[CLI Server]
+cli_server.color = On
+
+[Date]
+date.timezone = {{ NC_CONFIG.timezone }}
+
+[mail function]
+SMTP = localhost
+smtp_port = 25
+mail.add_x_header = On
+
+[Pdo_mysql]
+pdo_mysql.cache_size = 2000
+pdo_mysql.default_socket = {{ NC_CONFIG.database.socket }}
+
+[ODBC]
+odbc.allow_persistent = On
+odbc.check_persistent = On
+odbc.max_persistent = -1
+odbc.max_links = -1
+odbc.defaultlrl = 4096
+odbc.defaultbinmode = 1
+
+[Interbase]
+ibase.allow_persistent = 1
+ibase.max_persistent = -1
+ibase.max_links = -1
+ibase.timestampformat = "%Y-%m-%d %H:%M:%S"
+ibase.dateformat = "%Y-%m-%d"
+ibase.timeformat = "%H:%M:%S"
+
+[bcmath]
+bcmath.scale = 0
+
+[Session]
+session.save_handler = files
+session.save_path = "/usr/local/tmp/sessions"
+session.use_strict_mode = 0
+session.use_cookies = 1
+session.cookie_secure = True
+session.use_only_cookies = 1
+session.name = PHPSESSID
+session.auto_start = 0
+session.cookie_lifetime = 0
+session.cookie_path = /
+session.cookie_domain =
+session.cookie_httponly =
+session.serialize_handler = php
+session.gc_probability = 0
+session.gc_divisor = 1000
+session.gc_maxlifetime = 1440
+session.referer_check =
+session.cache_limiter = nocache
+session.cache_expire = 180
+session.use_trans_sid = 0
+session.sid_length = 26
+session.trans_sid_tags = "a=href,area=href,frame=src,form="
+session.sid_bits_per_character = 5
+
+[Assertion]
+zend.assertions = -1
+
+[Tidy]
+tidy.clean_output = Off
+
+[soap]
+soap.wsdl_cache_enabled=1
+soap.wsdl_cache_dir="/tmp"
+soap.wsdl_cache_ttl=86400
+soap.wsdl_cache_limit = 5
+
+[ldap]
+ldap.max_links = -1
+
+[opcache]
+opcache.enable=1
+opcache.enable_cli=1
+opcache.memory_consumption=128
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=10000
+opcache.revalidate_freq=1
+opcache.save_comments=1
+
+[openssl]
+apc.enabled=1
+apc.file_update_protection=2
+apc.optimization=0
+apc.shm_size=256M
+apc.include_once_override=0
+apc.shm_segments=1
+apc.ttl=7200
+apc.user_ttl=7200
+apc.gc_ttl=3600
+apc.num_files_hint=1024
+apc.enable_cli=0
+apc.max_file_size=5M
+apc.cache_by_default=1
+apc.use_request_time=1
+apc.slam_defense=0
+apc.mmap_file_mask=/usr/local/tmp/apc/apc.XXXXXX
+apc.stat_ctime=0
+apc.canonicalize=1
+apc.write_lock=1
+apc.report_autofilter=0
+apc.rfc1867=0
+apc.rfc1867_prefix =upload_
+apc.rfc1867_name=APC_UPLOAD_PROGRESS
+apc.rfc1867_freq=0
+apc.rfc1867_ttl=3600
+apc.lazy_classes=0
+apc.lazy_functions=0

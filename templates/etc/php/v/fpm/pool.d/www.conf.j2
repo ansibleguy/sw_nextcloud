@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_nextcloud
+
+[www]
+user = {{ NC_HC.user }}
+group = {{ NC_HC.group }}
+listen = /run/php/php{{ php_version }}-fpm.sock
+listen.owner = {{ NC_HC.user }}
+listen.group = {{ NC_HC.group }}
+pm = dynamic
+pm.max_children = 240
+pm.start_servers = 20
+pm.min_spare_servers = 10
+pm.max_spare_servers = 20
+pm.max_requests = 500
+
+env[HOSTNAME] = $HOSTNAME
+env[PATH] = /usr/local/bin:/usr/bin:/bin
+env[TMP] = /tmp
+env[TMPDIR] = /tmp
+env[TEMP] = /tmp

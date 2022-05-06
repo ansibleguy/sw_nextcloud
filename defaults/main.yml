@@ -1,0 +1,162 @@
+---
+
+# see: https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
+
+random_pwd_length: '50'  # must be string-type
+tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_nextcloud'
+
+NC_HC:
+  php_version: '8.0'
+  packages:
+    base: ['libxml2', 'ffmpeg']
+    php_base: ['libapache2-mod-php']
+    php_modules: [
+       # libxml,openssl,session,zlib = enabled by default
+      'ctype', 'curl', 'dom', 'GD', 'JSON', 'mbstring', 'posix', 'SimpleXML', 'XMLReader', 'XMLWriter', 'zip',
+      # db connection
+      'pdo-mysql',
+      # recommended
+      'fileinfo', 'bz2', 'intl',
+      # required for features
+      'ldap', 'smbclient', 'ftp', 'imap', 'bcmath', 'gmp',
+      # enhance performance
+      'redis', 'opcache',
+    ]
+    php_modules_optional: [
+      'phar', 'imagick', 'exif',
+    ]
+    redis: ['redis-server']
+    security: ['fail2ban']
+    tools: ['ncdu', 'iotop', 'iftop']  # disk-space & i/o troubleshooting tools one might need in combination with nextcloud
+
+  nc_secure_settings:
+    session_lifetime: 21600  # 6h
+    token_auth_enforced: 'true'
+    token_auth_activity_update: 60
+    config_is_read_only: 'true'
+
+  user: 'www-data'
+  group: 'www-data'
+
+default_nextcloud:
+  php_optional: false  # install optional php-modules
+  tools: false
+  security: false  # enable fail2ban and some harder nextcloud settings
+  timezone: 'Europe/Vienna'
+
+  manage:
+    db: true
+    webserver: true
+    php: true
+    redis: true  # better performance
+
+  settings:  # see: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/config_sample_php_parameters.html
+    path_data: '/var/data/nextcloud'
+    log_type: 'syslog'
+    syslog_tag: 'NextCloud'
+    # default_language:
+    # default_locale:
+    # defaultapp:
+    # mail_domain:
+    # mail_from_address:
+    # mail_smtphost:
+    # mail_smtpport:
+    # mail_smtpsecure:
+    # mail_smtpauth:
+    # mail_smtpname:  # smtp user
+    # mail_smtppassword:
+    # overwrite.cli.url: 'https://your-domain.org/'  # prettify urls
+    # htaccess.RewriteBase: '/'
+    php:
+      # settings will be replaced or appended
+      srv:
+        # max upload file-size
+        post_max_size: 20480M  # 10GB
+        upload_max_filesize: 20480M
+      fpm: {}
+      fpm_pool: {}
+      cli: {}
+
+  apache:
+    site:
+      # for more info see: https://github.com/ansibleguy/infra_apache
+      port_plain: 80
+      port_ssl: 443
+      # domain:
+      # aliases: []
+      # ip:
+
+      serve:
+        path: '/var/www/nextcloud'
+
+      ssl:  # see: https://github.com/ansibleguy/infra_certs
+        mode: 'selfsigned'  # existing/selfsigned/ca/letsencrypt
+        cert:
+          name:
+          cn: 'NextCloud Certificate'
+          org: 'AnsibleGuy'
+
+      config_additions:
+        - '<Directory /var/www/nextcloud/>'  # todo: change with serve-root; maybe implement some placeholder at apache-role-level
+        - '  Require all granted'
+        - '  AllowOverride All'
+        - '  Options FollowSymLinks MultiViews'
+        - '  <IfModule mod_dav.c>Dav off</IfModule>'
+        - '</Directory>'
+
+    modules:
+      present: ['ssl', 'headers', 'rewrite', 'http2', 'env', 'dir', 'mime']
+
+    security:
+      restrict_methods: false
+
+    headers:
+      'Referrer-Policy': 'no-referrer'
+      'X-Robots-Tag': 'none'
+
+  database:
+    name: 'nextcloud'
+    user: 'nextcloud'
+    # default => random pwd will be generated
+    pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_mysql chars=ascii_letters,digits length=' + random_pwd_length) }}"
+
+    update_password: 'always'  # or 'on_create'
+    settings:
+      innodb_log_file_size: '256M'
+      wait_timeout: 600
+      transaction-isolation: 'READ-COMMITTED'
+      binlog_format: 'ROW'
+
+    socket: '/run/mysqld/mysqld_nextcloud.sock'
+
+  redis:
+    port: 6379
+    host: 'localhost'
+    # default => random pwd will be generated
+    pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_redis chars=ascii_letters,digits length=' + random_pwd_length) }}"
+
+  fail2ban:
+    path_log: '/var/log/fail2ban'
+
+NC_CONFIG: "{{ default_nextcloud | combine(nextcloud, recursive=true) }}"
+
+NC_MARIADB_INSTANCE: "{{ {
+    'dbs': {
+      NC_CONFIG.database.name: {
+        'encoding': 'utf8mb4',
+        'collation': 'utf8mb4_general_ci'
+      },
+    },
+    'users': {
+      NC_CONFIG.database.user: {
+        'priv': NC_CONFIG.database.name + '.*:ALL',
+        'pwd': NC_CONFIG.database.pwd,
+        'update_pwd': NC_CONFIG.database.update_password
+      },
+    },
+    'settings': NC_CONFIG.database.settings,
+    'socket': NC_CONFIG.database.socket
+  } }}"  # DO NOT CHANGE!
+
+SETTING_GRAYLIST: ['path_data', 'redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains', 'php']
+NONE_VALUES: [none, '', ' ']
