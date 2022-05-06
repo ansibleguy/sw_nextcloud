@@ -41,8 +41,7 @@ NC_HC:
 default_nextcloud:
   php_optional: false  # install optional php-modules
   tools: false
-  security: false  # enable fail2ban and some harder nextcloud settings
-  timezone: 'Europe/Vienna'
+  enhanced_security: false  # enable fail2ban and some harder nextcloud settings
 
   manage:
     db: true
@@ -67,15 +66,17 @@ default_nextcloud:
     # mail_smtppassword:
     # overwrite.cli.url: 'https://your-domain.org/'  # prettify urls
     # htaccess.RewriteBase: '/'
-    php:
-      # settings will be replaced or appended
-      srv:
-        # max upload file-size
-        post_max_size: 20480M  # 10GB
-        upload_max_filesize: 20480M
-      fpm: {}
-      fpm_pool: {}
-      cli: {}
+
+  php:
+    # settings will be replaced or appended
+    srv:
+      # max upload file-size
+      post_max_size: 20480M  # 10GB
+      upload_max_filesize: 20480M
+      timezone: 'Europe/Vienna'
+    fpm: {}
+    fpm_pool: {}
+    cli: {}
 
   apache:
     site:
@@ -158,5 +159,5 @@ NC_MARIADB_INSTANCE: "{{ {
     'socket': NC_CONFIG.database.socket
   } }}"  # DO NOT CHANGE!
 
-SETTING_GRAYLIST: ['path_data', 'redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains', 'php']
+SETTING_GRAYLIST: ['path_data', 'redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains']
 NONE_VALUES: [none, '', ' ']

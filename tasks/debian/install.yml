@@ -50,7 +50,7 @@
       sites:
         nextcloud: "{{ NC_CONFIG.apache.site }}"
   no_log: true
-  tags: [config]
+  tags: [config, certs]
   when: NC_CONFIG.manage.webserver
 
 - name: NextCloud | Debian | Install | Setting up MariaDB instance

@@ -3,8 +3,8 @@
 # Ansible Role - NextCloud deployment
 Ansible Role to deploy NextCloud on a linux server.
 
-[![Ansible Galaxy](https://img.shields.io/ansible/role/59090)](https://galaxy.ansible.com/ansibleguy/sw_nextcloud)
-[![Ansible Galaxy Downloads](https://img.shields.io/badge/dynamic/json?color=blueviolet&label=Galaxy%20Downloads&query=%24.download_count&url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv1%2Froles%2F59090%2F%3Fformat%3Djson)](https://galaxy.ansible.com/ansibleguy/sw_nextcloud)
+[![Ansible Galaxy](https://img.shields.io/ansible/role/59111)](https://galaxy.ansible.com/ansibleguy/sw_nextcloud)
+[![Ansible Galaxy Downloads](https://img.shields.io/badge/dynamic/json?color=blueviolet&label=Galaxy%20Downloads&query=%24.download_count&url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv1%2Froles%2F59111%2F%3Fformat%3Djson)](https://galaxy.ansible.com/ansibleguy/sw_nextcloud)
 
 **Tested:**
 * None
@@ -15,17 +15,38 @@ Ansible Role to deploy NextCloud on a linux server.
 * **Package installation**
   * NextCloud Server
     * Dependencies (_php, ..._)
-    * Nginx => using [THIS Role](https://github.com/ansibleguy/infra_nginx)
+    * Apache => using [THIS Role](https://github.com/ansibleguy/infra_apache)
     * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
 
 
 * **Configuration**
-  * TO BE CONTINUED
+  * Default opt-ins:
+    * Database setup
+    * Webserver setup
+    * Redis-server (_increased performance_)
+    * PHP management
+
+  * Default opt-outs:
+    * Optional PHP modules
+    * Admin-tools
+    * Enhanced security config (_functionality might be impacted_)
+    * 
+
+  * Default config:
+    * Logging to syslog
+    * Upload size limit 20GB
+    * Self-Signed certificate
 
 ## Info
 
 * **Warning:** THIS ROLE IS NOT YET IN A STABLE STATE!
 
+
+* **Info:** You can add custom config-overrides for PHP and the NextCloud by providing key-value pairs!
+
+  PHP: ```nextcloud.php.cli/srv/fpm/fpm_pool```
+
+  NextCloud: ```nextcloud.settings```
 
 ## Setup
 For this role to work - you must install its dependencies first:
@@ -42,7 +63,32 @@ Define the nextcloud dictionary as needed.
 
 ```yaml
 nextcloud:
-  TO_BE_CONTINUED
+  enhanced_security: true
+  
+  php:  # php config-file overrides
+    srv:
+      timezone: 'Europe/Vienna'
+  
+  settings:  # nextcloud config-file overrides
+    default_language: 'de'
+    mail_from_address: 'nextcloud@template.ansibleguy.net'
+    mail_smtphost: 'mail.template.ansibleguy.net'
+  
+  apache:
+    site:
+      domain: 'nextcloud.template.ansibleguy.net'
+      aliases: ['nc.template.ansibleguy.net']
+
+      ssl:
+        mode: 'letsencrypt'  # or selfsigned
+        #  if you use 'selfsigned':
+        #    cert:
+        #      cn: 'NextCloud Server'
+        #      org: 'AnsibleGuy'
+        #      email: 'nextcloud@template.ansibleguy.net'
+      letsencrypt:
+        email: 'nextcloud@template.ansibleguy.net'
+
 ```
 
 You might want to use 'ansible-vault' to encrypt your passwords:
@@ -61,3 +107,4 @@ There are also some useful **tags** available:
 * config
 * php
 * db
+* certs

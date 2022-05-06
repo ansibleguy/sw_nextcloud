@@ -26,24 +26,24 @@
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
     insertbefore: '# INSERT BEFORE'
-  with_dict: "{{ NC_CONFIG.settings.php.srv }}"
-  when: NC_CONFIG.settings.php.srv | length > 0
+  with_dict: "{{ NC_CONFIG.php.srv }}"
+  when: NC_CONFIG.php.srv | length > 0
 
 - name: NextCloud | Debian | PHP | Setting custom FPM config
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ NC_HC.php_version }}/fpm/php-fpm.conf"
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
-  with_dict: "{{ NC_CONFIG.settings.php.fpm }}"
-  when: NC_CONFIG.settings.php.fpm | length > 0
+  with_dict: "{{ NC_CONFIG.php.fpm }}"
+  when: NC_CONFIG.php.fpm | length > 0
 
 - name: NextCloud | Debian | PHP | Setting custom FPM config
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ NC_HC.php_version }}/fpm/pool.d/www.conf"
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
-  with_dict: "{{ NC_CONFIG.settings.php.fpm_pool }}"
-  when: NC_CONFIG.settings.php.fpm_pool | length > 0
+  with_dict: "{{ NC_CONFIG.php.fpm_pool }}"
+  when: NC_CONFIG.php.fpm_pool | length > 0
 
 - name: NextCloud | Debian | PHP | Setting custom client config
   ansible.builtin.lineinfile:
@@ -51,8 +51,8 @@
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
     insertbefore: '# INSERT BEFORE'
-  with_dict: "{{ NC_CONFIG.settings.php.cli }}"
-  when: NC_CONFIG.settings.php.cli | length > 0
+  with_dict: "{{ NC_CONFIG.php.cli }}"
+  when: NC_CONFIG.php.cli | length > 0
 
 - name: NextCloud | Debian | PHP | Copying mysql config
   ansible.builtin.template:
