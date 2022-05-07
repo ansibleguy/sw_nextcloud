@@ -3,7 +3,7 @@
 - name: NextCloud | Debian | PHP | Copying client config
   ansible.builtin.template:
     src: 'templates/etc/php/v/cli/php.ini.j2'
-    dest: "/etc/php/{{ NC_HC.php_version }}/cli/php.ini"
+    dest: "/etc/php/{{ NC_HC.php.version }}/cli/php.ini"
     owner: 'root'
     group: 'root'
     mode: 0644
@@ -11,7 +11,7 @@
 - name: NextCloud | Debian | PHP | Copying fpm config
   ansible.builtin.template:
     src: "templates/etc/php/v/{{ item }}.j2"
-    dest: "/etc/php/{{ NC_HC.php_version }}/{{ item }}"
+    dest: "/etc/php/{{ NC_HC.php.version }}/{{ item }}"
     owner: 'root'
     group: 'root'
     mode: 0644
@@ -22,7 +22,7 @@
 
 - name: NextCloud | Debian | PHP | Setting custom server config
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ NC_HC.php_version }}/fpm/php.ini"
+    path: "/etc/php/{{ NC_HC.php.version }}/fpm/php.ini"
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
     insertbefore: '# INSERT BEFORE'
@@ -31,7 +31,7 @@
 
 - name: NextCloud | Debian | PHP | Setting custom FPM config
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ NC_HC.php_version }}/fpm/php-fpm.conf"
+    path: "/etc/php/{{ NC_HC.php.version }}/fpm/php-fpm.conf"
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
   with_dict: "{{ NC_CONFIG.php.fpm }}"
@@ -39,7 +39,7 @@
 
 - name: NextCloud | Debian | PHP | Setting custom FPM config
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ NC_HC.php_version }}/fpm/pool.d/www.conf"
+    path: "/etc/php/{{ NC_HC.php.version }}/fpm/pool.d/www.conf"
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
   with_dict: "{{ NC_CONFIG.php.fpm_pool }}"
@@ -47,7 +47,7 @@
 
 - name: NextCloud | Debian | PHP | Setting custom client config
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ NC_HC.php_version }}/cli/php.ini"
+    path: "/etc/php/{{ NC_HC.php.version }}/cli/php.ini"
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
     insertbefore: '# INSERT BEFORE'
@@ -57,13 +57,13 @@
 - name: NextCloud | Debian | PHP | Copying mysql config
   ansible.builtin.template:
     src: "templates/etc/php/v/mods-available/mysql.ini.j2"
-    dest: "/etc/php/{{ NC_HC.php_version }}/mods-available/mysql.ini"
+    dest: "/etc/php/{{ NC_HC.php.version }}/mods-available/mysql.ini"
     owner: 'root'
     group: 'root'
     mode: 0644
 
 - name: NextCloud | Debian | Security | Starting/enabling PHP-FPM
   ansible.builtin.systemd:
-    name: "php{{ NC_HC.php_version }}-fpm.service"
+    name: "php{{ NC_HC.php.version }}-fpm.service"
     state: restarted
     enabled: true

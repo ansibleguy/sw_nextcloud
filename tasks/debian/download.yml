@@ -1,0 +1,23 @@
+---
+
+- name: NextCloud | Debian | Install | Download | Setting download URL
+  ansible.builtin.set_fact:
+    nc_dl: "{{ NC_HC.nc.download_url }}/{{ NC_CONFIG.version }}.tar.bz2"
+  when: NC_CONFIG.version == 'latest'
+
+- name: NextCloud | Debian | Install | Download | Setting download URL to specific version
+  ansible.builtin.set_fact:
+    nc_dl: "{{ NC_HC.nc.download_url }}/nextcloud-{{ NC_CONFIG.version }}.tar.bz2"
+  when: NC_CONFIG.version != 'latest'
+
+- name: NextCloud | Debian | Install | Download | Downloading NextCloud sources
+  ansible.builtin.get_url:
+    url: "{{ nc_dl }}"
+    dest: '/tmp/nextcloud.tar.bz2'
+    checksum: "sha256:{{ nc_dl }}.sha256"
+
+- name: NextCloud | Debian | Install | Download | Unpacking source code
+  ansible.builtin.unarchive:
+    src: '/tmp/nextcloud.tar.bz2'
+    dest: "{{ NC_CONFIG.apache.serve.path }}/.."
+    remote_src: yes

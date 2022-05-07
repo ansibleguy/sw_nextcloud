@@ -37,18 +37,18 @@
   ansible.builtin.apt:
     name: "{{ NC_HC.packages.security }}"
     state: present
-  when: NC_CONFIG.security
+  when: NC_CONFIG.enhanced_security
 
 - name: NextCloud | Debian | Install | Configuring Apache sites
   ansible.builtin.include_role:
     name: ansibleguy.infra_apache
   vars:
     apache:
-      security: "{{ NC_CONFIG.apache.security }}"
-      modules: "{{ NC_CONFIG.apache.modules }}"
-      headers: "{{ NC_CONFIG.apache.headers }}"
+      security: "{{ NC_HC.apache.security }}"
+      modules: "{{ NC_HC.apache.modules }}"
+      headers: "{{ NC_HC.apache.headers }}"
       sites:
-        nextcloud: "{{ NC_CONFIG.apache.site }}"
+        nextcloud: "{{ NC_CONFIG.apache }}"
   no_log: true
   tags: [config, certs]
   when: NC_CONFIG.manage.webserver
@@ -63,3 +63,12 @@
   no_log: true
   when: NC_CONFIG.manage.db
   tags: [config, db]
+
+- name: NextCloud | Debian | Install | Checking if NextCloud sources exist
+  ansible.builtin.stat:
+    path: "{{ NC_CONFIG.apache.serve.path }}/config/config.php"
+  register: nc_src_test
+
+- name: NextCloud | Debian | Install | Download
+  ansible.builtin.import_tasks: download.yml
+  when: not nc_src_test.stat.exists

@@ -1,26 +1,39 @@
 ---
 
+- name: NextCloud | Debian | Install | PHP | Repository key
+  apt_key:
+    url: "{{ NC_HC.php.repo_key }}"
+    state: present
+
+- name: NextCloud | Debian | Install | PHP | Repository
+  apt_repository:
+    repo: "{{ NC_HC.php.repo }}"
+    update_cache: true
+    state: present
+
 - name: NextCloud | Debian | Install | PHP | Packages
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
   loop:
-    - "php{{ NC_HC.packages.php_version }}"
+    - "php{{ NC_HC.php.version }}"
     - "{{ NC_HC.packages.php_base }}"
 
 - name: NextCloud | Debian | Install | PHP | Required PHP Modules
   ansible.builtin.apt:
-    name: "{{ NC_HC.packages.php_modules }}"
+    name: "php{{ NC_HC.php.version }}-{{ item }}"
     state: present
+  loop: "{{ NC_HC.packages.php_modules }}"
 
 - name: NextCloud | Debian | Install | PHP | Optional PHP Modules
   ansible.builtin.apt:
-    name: "{{ NC_HC.packages.php_modules_optional }}"
+    name: "php{{ NC_HC.php.version }}-{{ item }}"
     state: present
+  loop: "{{ NC_HC.packages.php_modules_optional }}"
   when: NC_CONFIG.php_optional
 
 - name: NextCloud | Debian | Install | PHP | Enabling PHP-FPM
   ansible.builtin.systemd:
-    name: "php{{ NC_HC.php_version }}-fpm.service"
+    name: "php{{ NC_HC.php.version }}-fpm.service"
     enabled: true
     daemon_reload: yes

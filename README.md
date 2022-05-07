@@ -30,7 +30,6 @@ Ansible Role to deploy NextCloud on a linux server.
     * Optional PHP modules
     * Admin-tools
     * Enhanced security config (_functionality might be impacted_)
-    * 
 
   * Default config:
     * Logging to syslog
@@ -47,6 +46,16 @@ Ansible Role to deploy NextCloud on a linux server.
   PHP: ```nextcloud.php.cli/srv/fpm/fpm_pool```
 
   NextCloud: ```nextcloud.settings```
+
+
+* **Note:** You can configure any target version of NextCloud to be installed!
+
+BE AWARE that the hardcoded dependencies might not 
+
+
+* **Disclaimer:** I'm not an expert regarding PHP-Setups - therefore some default settings might not be optimal.
+
+  If you have experience in that field => you are welcome to point out any possible optimizations. Just open an issue (:
 
 ## Setup
 For this role to work - you must install its dependencies first:
@@ -70,24 +79,25 @@ nextcloud:
       timezone: 'Europe/Vienna'
   
   settings:  # nextcloud config-file overrides
+    path_data: '/mnt/data'
     default_language: 'de'
+    default_locale: 'de_DE'
     mail_from_address: 'nextcloud@template.ansibleguy.net'
     mail_smtphost: 'mail.template.ansibleguy.net'
   
   apache:
-    site:
-      domain: 'nextcloud.template.ansibleguy.net'
-      aliases: ['nc.template.ansibleguy.net']
+    domain: 'nextcloud.template.ansibleguy.net'
+    aliases: ['nc.template.ansibleguy.net']
 
-      ssl:
-        mode: 'letsencrypt'  # or selfsigned
-        #  if you use 'selfsigned':
-        #    cert:
-        #      cn: 'NextCloud Server'
-        #      org: 'AnsibleGuy'
-        #      email: 'nextcloud@template.ansibleguy.net'
-      letsencrypt:
-        email: 'nextcloud@template.ansibleguy.net'
+    ssl:
+      mode: 'letsencrypt'  # or selfsigned
+      #  if you use 'selfsigned':
+      #    cert:
+      #      cn: 'NextCloud Server'
+      #      org: 'AnsibleGuy'
+      #      email: 'nextcloud@template.ansibleguy.net'
+    letsencrypt:
+      email: 'nextcloud@template.ansibleguy.net'
 
 ```
 

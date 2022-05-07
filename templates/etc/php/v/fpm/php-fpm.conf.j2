@@ -1,12 +1,11 @@
-# {{ ansible_managed }}
-# ansibleguy.sw_nextcloud
+; {{ ansible_managed }}
+; ansibleguy.sw_nextcloud
 
-# FPM Configuration
+; FPM Configuration
 
 [global]
-pid = /run/php/php{{ php_version }}-fpm.pid
-error_log = /var/log/php{{ php_version }}-fpm.log
+pid = /run/php/php{{ NC_HC.php.version }}-fpm.pid
 emergency_restart_threshold = 10
 emergency_restart_interval = 1m
 process_control_timeout = 10s
-include=/etc/php/{{ php_version }}/fpm/pool.d/*.conf
+include=/etc/php/{{ NC_HC.php.version }}/fpm/pool.d/*.conf

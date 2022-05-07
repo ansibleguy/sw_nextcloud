@@ -5,14 +5,15 @@
 random_pwd_length: '50'  # must be string-type
 tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_nextcloud'
 
-NC_HC:
-  php_version: '8.0'
+NC_HC:  # 'hardcoded' defaults => should not be changed
   packages:
-    base: ['libxml2', 'ffmpeg']
+    base: ['libxml2', 'ffmpeg', 'gpg']
     php_base: ['libapache2-mod-php']
     php_modules: [
        # libxml,openssl,session,zlib = enabled by default
-      'ctype', 'curl', 'dom', 'GD', 'JSON', 'mbstring', 'posix', 'SimpleXML', 'XMLReader', 'XMLWriter', 'zip',
+       # json = sub-package of fpm
+       # simplexml, xmlreader, xmlwriter = xml
+      'fpm', 'ctype', 'curl', 'dom', 'gd', 'mbstring', 'posix', 'xml', 'zip',
       # db connection
       'pdo-mysql',
       # recommended
@@ -37,11 +38,31 @@ NC_HC:
 
   user: 'www-data'
   group: 'www-data'
+  php:
+    version: '8.0'
+    repo_key: 'https://packages.sury.org/php/apt.gpg'
+    repo: "deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main"
+    path_log: '/var/log/php'
+
+  nc:
+    download_url: 'https://download.nextcloud.com/server/releases'
+
+  apache:
+    modules:
+      present: ['ssl', 'headers', 'rewrite', 'http2', 'env', 'dir', 'mime']
+
+    security:
+      restrict_methods: false
+
+    headers:
+      'Referrer-Policy': 'no-referrer'
+      'X-Robots-Tag': 'none'
 
 default_nextcloud:
   php_optional: false  # install optional php-modules
-  tools: false
+  tools: false  # install admin-tools for disk-space & i/o troubleshooting
   enhanced_security: false  # enable fail2ban and some harder nextcloud settings
+  version: 'latest'  # be aware: dependencies may differ between major versions..
 
   manage:
     db: true
@@ -76,44 +97,35 @@ default_nextcloud:
       timezone: 'Europe/Vienna'
     fpm: {}
     fpm_pool: {}
-    cli: {}
+    cli: {}  # settings used by nextcloud background tasks (cron jobs)
 
   apache:
-    site:
-      # for more info see: https://github.com/ansibleguy/infra_apache
-      port_plain: 80
-      port_ssl: 443
-      # domain:
-      # aliases: []
-      # ip:
+    # for more info see: https://github.com/ansibleguy/infra_apache
+    port_plain: 80
+    port_ssl: 443
+    # domain:
+    # aliases: []
+    # ip:
 
-      serve:
-        path: '/var/www/nextcloud'
+    serve:
+      path: '/var/www/nextcloud'
 
-      ssl:  # see: https://github.com/ansibleguy/infra_certs
-        mode: 'selfsigned'  # existing/selfsigned/ca/letsencrypt
-        cert:
-          name:
-          cn: 'NextCloud Certificate'
-          org: 'AnsibleGuy'
+    ssl:  # see: https://github.com/ansibleguy/infra_certs
+      mode: 'selfsigned'  # existing/selfsigned/ca/letsencrypt
+      cert:
+        name:
+        cn: 'NextCloud Certificate'
+        org: 'AnsibleGuy'
 
-      config_additions:
-        - '<Directory /var/www/nextcloud/>'  # todo: change with serve-root; maybe implement some placeholder at apache-role-level
-        - '  Require all granted'
-        - '  AllowOverride All'
-        - '  Options FollowSymLinks MultiViews'
-        - '  <IfModule mod_dav.c>Dav off</IfModule>'
-        - '</Directory>'
-
-    modules:
-      present: ['ssl', 'headers', 'rewrite', 'http2', 'env', 'dir', 'mime']
-
-    security:
-      restrict_methods: false
-
-    headers:
-      'Referrer-Policy': 'no-referrer'
-      'X-Robots-Tag': 'none'
+    config_additions:
+      - '<Directory /var/www/nextcloud/>'  # todo: change with serve-root; maybe implement some placeholder at apache-role-level
+      - '  Require all granted'
+      - '  AllowOverride All'
+      - '  Options FollowSymLinks MultiViews'
+      - '  <IfModule mod_dav.c>'
+      - '    Dav off'
+      - '  </IfModule>'
+      - '</Directory>'
 
   database:
     name: 'nextcloud'

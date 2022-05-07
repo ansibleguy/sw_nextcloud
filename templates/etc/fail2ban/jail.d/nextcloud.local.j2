@@ -4,7 +4,7 @@
 [nextcloud]
 backend = auto
 enabled = true
-port = {{ NC_CONFIG.apache.site.port_plain }},{{ NC_CONFIG.apache.site.port_ssl }}
+port = {{ NC_CONFIG.apache.port_plain }},{{ NC_CONFIG.apache.port_ssl }}
 protocol = tcp
 filter = nextcloud
 maxretry = 3
