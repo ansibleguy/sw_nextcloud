@@ -1,0 +1,13 @@
+---
+
+- name: Single | Check
+  hosts: test-ag-nc-checker
+  gather_facts: false
+  tasks:
+  - name: Checking if nextcloud web-service is running
+    ansible.builtin.uri:
+      url: 'https://192.168.0.20'
+      return_content: yes
+      validate_certs: false
+    register: page
+    failed_when: "'AWESOME' not in page.content"

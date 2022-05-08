@@ -1,0 +1,47 @@
+---
+
+- name: NextCloud | Debian | Install | Checking if NextCloud code exists
+  ansible.builtin.stat:
+    path: "{{ NC_CONFIG.apache.serve.path }}/config/config.php"
+  register: nc_src_test
+
+- name: NextCloud | Debian | Install | Download
+  ansible.builtin.import_tasks: install_download.yml
+  when: >
+    not nc_src_test.stat.exists or
+    NC_CONFIG.upgrade
+
+- name: NextCloud | Debian | Install | Copying nextcloud config
+  ansible.builtin.template:
+    src: 'templates/var/www/nextcloud/config/ansible.config.php.j2'
+    dest: '/var/www/nextcloud/config/ansible.config.php'
+    owner: "{{ NC_HC.user }}"
+    group: "{{ NC_HC.group }}"
+    mode: 0750
+
+- name: NextCloud | Debian | Install | Updating file-ownership
+  ansible.builtin.file:
+    state: directory
+    path: "{{ NC_CONFIG.apache.serve.path }}"
+    owner: "{{ NC_HC.user }}"
+    group: "{{ NC_HC.group }}"
+    recurse: true
+
+- name: NextCloud | Debian | Install | Running NextCloud installation
+  become_user: "{{ NC_HC.user }}"
+  become: yes
+  command: >
+    php{{ NC_HC.php.version }} occ maintenance:install
+    --database "{{ NC_CONFIG.database.type }}"
+    --database-host "{{ NC_CONFIG.database.host }}"
+    --database-name "{{ NC_CONFIG.database.name }}"
+    --database-user "{{ NC_CONFIG.database.user }}"
+    --database-pass "{{ NC_CONFIG.database.pwd }}"
+    --admin-user "{{ NC_CONFIG.config.admin_user }}"
+    --admin-pass "{{ NC_CONFIG.config.admin_pwd }}"
+    --data-dir "{{ NC_CONFIG.config.path_data }}"
+  args:
+    chdir: "{{ NC_CONFIG.apache.serve.path }}"
+  when: >
+    not nc_src_test.stat.exists
+    or NC_CONFIG.upgrade

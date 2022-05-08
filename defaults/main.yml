@@ -7,7 +7,7 @@ tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_nextcloud'
 
 NC_HC:  # 'hardcoded' defaults => should not be changed
   packages:
-    base: ['libxml2', 'ffmpeg', 'gpg']
+    base: ['libxml2', 'ffmpeg', 'gpg', 'acl']  # NOTE: 'acl' needed to let ansible become www-data
     php_base: ['libapache2-mod-php']
     php_modules: [
        # libxml,openssl,session,zlib = enabled by default
@@ -34,7 +34,6 @@ NC_HC:  # 'hardcoded' defaults => should not be changed
     session_lifetime: 21600  # 6h
     token_auth_enforced: 'true'
     token_auth_activity_update: 60
-    config_is_read_only: 'true'
 
   user: 'www-data'
   group: 'www-data'
@@ -63,6 +62,7 @@ default_nextcloud:
   tools: false  # install admin-tools for disk-space & i/o troubleshooting
   enhanced_security: false  # enable fail2ban and some harder nextcloud settings
   version: 'latest'  # be aware: dependencies may differ between major versions..
+  upgrade: false  # will download current version and install it
 
   manage:
     db: true
@@ -70,8 +70,14 @@ default_nextcloud:
     php: true
     redis: true  # better performance
 
-  settings:  # see: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/config_sample_php_parameters.html
+  config:
     path_data: '/var/data/nextcloud'
+    admin_user: 'admin'
+    # default => random pwd will be generated
+    admin_pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_ncadm chars=ascii_letters,digits length=' + random_pwd_length) }}"
+
+
+  settings:  # see: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/config_sample_php_parameters.html
     log_type: 'syslog'
     syslog_tag: 'NextCloud'
     # default_language:
@@ -95,7 +101,8 @@ default_nextcloud:
       post_max_size: 20480M  # 10GB
       upload_max_filesize: 20480M
       timezone: 'Europe/Vienna'
-    fpm: {}
+    fpm:
+      listen: '127.0.0.1:9000'
     fpm_pool: {}
     cli: {}  # settings used by nextcloud background tasks (cron jobs)
 
@@ -141,12 +148,16 @@ default_nextcloud:
       binlog_format: 'ROW'
 
     socket: '/run/mysqld/mysqld_nextcloud.sock'
+    # ONLY CHANGE IF DB IS NOT MANAGED BY ROLE!
+    type: 'mysql'
+    host: 'localhost'
 
   redis:
     port: 6379
     host: 'localhost'
     # default => random pwd will be generated
     pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_redis chars=ascii_letters,digits length=' + random_pwd_length) }}"
+    settings: {}  # setting overrides for redis.conf
 
   fail2ban:
     path_log: '/var/log/fail2ban'
@@ -171,5 +182,5 @@ NC_MARIADB_INSTANCE: "{{ {
     'socket': NC_CONFIG.database.socket
   } }}"  # DO NOT CHANGE!
 
-SETTING_GRAYLIST: ['path_data', 'redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains']
+SETTING_GRAYLIST: ['redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains']
 NONE_VALUES: [none, '', ' ']

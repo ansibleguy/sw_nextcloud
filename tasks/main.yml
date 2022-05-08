@@ -19,3 +19,4 @@
   loop:
     - "{{ tmp_pwd_file_prefix }}_mysql"
     - "{{ tmp_pwd_file_prefix }}_redis"
+    - "{{ tmp_pwd_file_prefix }}_ncadm"

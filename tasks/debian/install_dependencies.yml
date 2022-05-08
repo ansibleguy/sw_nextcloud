@@ -3,12 +3,10 @@
 - name: NextCloud | Debian | Install | Creating directories
   ansible.builtin.file:
     state: directory
-    path: "{{ item }}"
+    path: "{{ NC_CONFIG.config.path_data }}"
     owner: "{{ NC_HC.user }}"
     group: "{{ NC_HC.group }}"
     mode: 0755
-  loop:
-    - "{{ NC_CONFIG.settings.path_data }}"
 
 - name: NextCloud | Debian | Install | Packages
   ansible.builtin.apt:
@@ -18,13 +16,6 @@
 - name: NextCloud | Debian | Install | PHP
   ansible.builtin.import_tasks: install_php.yml
   when: NC_CONFIG.manage.php
-  tags: [php]
-
-- name: NextCloud | Debian | Install | Redis
-  ansible.builtin.apt:
-    name: "{{ NC_HC.packages.redis }}"
-    state: present
-  when: NC_CONFIG.manage.redis
   tags: [php]
 
 - name: NextCloud | Debian | Install | Tools
@@ -38,6 +29,12 @@
     name: "{{ NC_HC.packages.security }}"
     state: present
   when: NC_CONFIG.enhanced_security
+
+- name: NextCloud | Debian | Install | Redis
+  ansible.builtin.import_tasks: install_redis.yml
+  when:
+    - NC_CONFIG.manage.redis
+    - NC_CONFIG.redis.host == 'localhost'
 
 - name: NextCloud | Debian | Install | Configuring Apache sites
   ansible.builtin.include_role:
@@ -61,14 +58,8 @@
       instances:
         nextcloud: "{{ NC_MARIADB_INSTANCE }}"
   no_log: true
-  when: NC_CONFIG.manage.db
+  when:
+    - NC_CONFIG.manage.db
+    - NC_CONFIG.database.host == 'localhost'
+    - NC_CONFIG.database.type == 'mysql'
   tags: [config, db]
-
-- name: NextCloud | Debian | Install | Checking if NextCloud sources exist
-  ansible.builtin.stat:
-    path: "{{ NC_CONFIG.apache.serve.path }}/config/config.php"
-  register: nc_src_test
-
-- name: NextCloud | Debian | Install | Download
-  ansible.builtin.import_tasks: download.yml
-  when: not nc_src_test.stat.exists

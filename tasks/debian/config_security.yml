@@ -1,13 +1,5 @@
 ---
 
-- name: NextCloud | Debian | Config | Setting config to read-only
-  ansible.builtin.file:
-    state: file
-    path: '/var/www/nextcloud/config/ansible.config.php'
-    owner: "{{ NC_HC.user }}"
-    group: "{{ NC_HC.group }}"
-    mode: 0440
-
 - name: NextCloud | Debian | Security | Creating directories
   ansible.builtin.file:
     state: directory

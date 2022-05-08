@@ -1,19 +1,18 @@
 ---
 
-- name: NextCloud | Debian | Install
-  ansible.builtin.import_tasks: install.yml
+- name: NextCloud | Debian | Installing dependencies
+  ansible.builtin.import_tasks: install_dependencies.yml
 
-- name: NextCloud | Debian | PHP
-  ansible.builtin.import_tasks: php.yml
+- name: NextCloud | Debian | Configure PHP
+  ansible.builtin.import_tasks: config_php.yml
   when: NC_CONFIG.manage.php
   tags: [config, php]
 
-- name: NextCloud | Debian | Config
-  ansible.builtin.import_tasks: nc.yml
-  tags: [config]
+- name: NextCloud | Debian | Installing NextCloud
+  ansible.builtin.import_tasks: install_nc.yml
 
 - name: NextCloud | Debian | Security
-  ansible.builtin.import_tasks: security.yml
+  ansible.builtin.import_tasks: config_security.yml
   when: NC_CONFIG.enhanced_security
   tags: [config]
 

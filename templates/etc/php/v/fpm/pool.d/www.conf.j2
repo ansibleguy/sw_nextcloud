@@ -4,15 +4,12 @@
 [www]
 user = {{ NC_HC.user }}
 group = {{ NC_HC.group }}
-listen = /run/php/php{{ NC_HC.php.version }}-fpm.sock
-listen.owner = {{ NC_HC.user }}
-listen.group = {{ NC_HC.group }}
+listen = 127.0.0.1:9000
 pm = dynamic
-pm.max_children = 240
-pm.start_servers = 20
-pm.min_spare_servers = 10
-pm.max_spare_servers = 20
-pm.max_requests = 500
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
 
 env[HOSTNAME] = $HOSTNAME
 env[PATH] = /usr/local/bin:/usr/bin:/bin

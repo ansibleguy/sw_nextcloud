@@ -1,0 +1,30 @@
+---
+
+- name: NextCloud | Debian | Install | Redis | Package
+  ansible.builtin.apt:
+    name: "{{ NC_HC.packages.redis }}"
+    state: present
+
+- name: NextCloud | Debian | Install | Redis | Config
+  ansible.builtin.template:
+    src: 'templates/etc/redis/redis.conf.j2'
+    dest: '/etc/redis/redis.conf'
+    owner: 'redis'
+    group: 'redis'
+    mode: 0640
+  tags: [config]
+
+- name: NextCloud | Debian | Install | Redis | Setting custom config
+  ansible.builtin.lineinfile:
+    path: '/etc/redis/redis.conf'
+    regexp: "^{{ item.key }} "
+    line: "{{ item.key }} {{ item.value }}"
+  with_dict: "{{ NC_CONFIG.redis.settings }}"
+  when: NC_CONFIG.redis.settings | length > 0
+  tags: [config]
+
+- name: NextCloud | Debian | Install | Redis | Starting/enabling
+  ansible.builtin.systemd:
+    name: 'redis-server.service'
+    state: restarted
+    enabled: true

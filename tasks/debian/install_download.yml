@@ -10,14 +10,22 @@
     nc_dl: "{{ NC_HC.nc.download_url }}/nextcloud-{{ NC_CONFIG.version }}.tar.bz2"
   when: NC_CONFIG.version != 'latest'
 
-- name: NextCloud | Debian | Install | Download | Downloading NextCloud sources
+- name: NextCloud | Debian | Install | Download | Downloading NextCloud code
   ansible.builtin.get_url:
     url: "{{ nc_dl }}"
     dest: '/tmp/nextcloud.tar.bz2'
     checksum: "sha256:{{ nc_dl }}.sha256"
 
-- name: NextCloud | Debian | Install | Download | Unpacking source code
+- name: NextCloud | Debian | Install | Download | Unpacking code
   ansible.builtin.unarchive:
     src: '/tmp/nextcloud.tar.bz2'
     dest: "{{ NC_CONFIG.apache.serve.path }}/.."
     remote_src: yes
+
+- name: NextCloud | Debian | Install | Download | Updating file-ownership
+  ansible.builtin.file:
+    state: directory
+    path: "{{ NC_CONFIG.apache.serve.path }}"
+    owner: "{{ NC_HC.user }}"
+    group: "{{ NC_HC.group }}"
+    recurse: true

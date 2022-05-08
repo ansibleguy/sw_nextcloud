@@ -41,6 +41,9 @@ Ansible Role to deploy NextCloud on a linux server.
 * **Warning:** THIS ROLE IS NOT YET IN A STABLE STATE!
 
 
+* **Note:** Most of this functionality can be opted in or out using the main defaults file and variables!
+
+
 * **Info:** You can add custom config-overrides for PHP and the NextCloud by providing key-value pairs!
 
   PHP: ```nextcloud.php.cli/srv/fpm/fpm_pool```
@@ -54,6 +57,8 @@ BE AWARE that the hardcoded dependencies might not
 
 
 * **Disclaimer:** I'm not an expert regarding PHP-Setups - therefore some default settings might not be optimal.
+
+  I copied it from the [official docker image](https://hub.docker.com/_/nextcloud/).
 
   If you have experience in that field => you are welcome to point out any possible optimizations. Just open an issue (:
 

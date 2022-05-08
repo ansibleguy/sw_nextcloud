@@ -1,0 +1,45 @@
+---
+
+- name: Converge
+  hosts: all
+  vars:
+    nextcloud:
+      enhanced_security: true
+      tools: true
+      php_optional: true
+
+      manage:
+        db: true
+        webserver: true
+        php: true
+        redis: true
+
+      php:
+        srv:
+          timezone: 'Europe/Vienna'
+          smtp_port: 587
+
+      config:
+        path_data: '/var/test/nextcloud'
+
+      settings:
+        default_language: 'en'
+        default_locale: 'de_AT'
+        mail_from_address: 'nextcloud@mail.test.ansibleguy.net'
+        mail_smtphost: 'mail.test.ansibleguy.net'
+
+      apache:
+        domain: 'nextcloud.test.ansibleguy.net'
+
+      serve:
+        path: '/var/www/test/nextcloud'
+
+        ssl:
+          mode: 'selfsigned'
+          cert:
+            cn: 'NextCloud'
+            org: 'AnsibleGuy Test'
+            email: 'webmaster@mail.test.ansibleguy.net'
+
+  roles:
+    - ansibleguy.sw_nextcloud
