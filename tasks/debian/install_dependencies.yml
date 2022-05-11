@@ -45,7 +45,7 @@
       modules: "{{ NC_HC.apache.modules }}"
       headers: "{{ NC_HC.apache.headers }}"
       sites:
-        nextcloud: "{{ NC_CONFIG.apache }}"
+        nextcloud: "{{ nc_apache_path | combine(NC_CONFIG.apache, recursive=true) }}"
   no_log: true
   tags: [config, certs]
   when: NC_CONFIG.manage.webserver

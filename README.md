@@ -15,7 +15,7 @@ Ansible Role to deploy NextCloud on a linux server.
 * **Package installation**
   * NextCloud Server
     * Dependencies (_php, ..._)
-    * Apache => using [THIS Role](https://github.com/ansibleguy/infra_apache)
+    * Apache2 => using [THIS Role](https://github.com/ansibleguy/infra_apache)
     * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
 
 
@@ -42,6 +42,9 @@ Ansible Role to deploy NextCloud on a linux server.
 
 
 * **Note:** Most of this functionality can be opted in or out using the main defaults file and variables!
+
+
+* **Note:** this role currently only supports debian-based systems
 
 
 * **Info:** You can add custom config-overrides for PHP and the NextCloud by providing key-value pairs!
@@ -78,6 +81,7 @@ Define the nextcloud dictionary as needed.
 ```yaml
 nextcloud:
   enhanced_security: true
+  tools: true  # install useful admin-tools
   
   php:  # php config-file overrides
     srv:
@@ -103,8 +107,19 @@ nextcloud:
       #      email: 'nextcloud@template.ansibleguy.net'
     letsencrypt:
       email: 'nextcloud@template.ansibleguy.net'
-
 ```
+
+Bare minimum example:
+```yaml
+nextcloud:
+  php:
+    srv:
+      timezone: 'Europe/Vienna'
+  
+  apache:
+    domain: 'nextcloud.template.ansibleguy.net'
+```
+
 
 You might want to use 'ansible-vault' to encrypt your passwords:
 ```bash

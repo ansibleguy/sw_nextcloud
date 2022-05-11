@@ -1,12 +1,12 @@
 ---
 
 - name: NextCloud | Debian | Install | PHP | Repository key
-  apt_key:
+  ansible.builtin.apt_key:
     url: "{{ NC_HC.php.repo_key }}"
     state: present
 
 - name: NextCloud | Debian | Install | PHP | Repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "{{ NC_HC.php.repo }}"
     update_cache: true
     state: present

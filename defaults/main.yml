@@ -72,6 +72,7 @@ default_nextcloud:
 
   config:
     path_data: '/var/data/nextcloud'
+    path_web: '/var/www/nextcloud'
     admin_user: 'admin'
     # default => random pwd will be generated
     admin_pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_ncadm chars=ascii_letters,digits length=' + random_pwd_length) }}"
@@ -113,9 +114,6 @@ default_nextcloud:
     # domain:
     # aliases: []
     # ip:
-
-    serve:
-      path: '/var/www/nextcloud'
 
     ssl:  # see: https://github.com/ansibleguy/infra_certs
       mode: 'selfsigned'  # existing/selfsigned/ca/letsencrypt
@@ -165,22 +163,26 @@ default_nextcloud:
 NC_CONFIG: "{{ default_nextcloud | combine(nextcloud, recursive=true) }}"
 
 NC_MARIADB_INSTANCE: "{{ {
-    'dbs': {
-      NC_CONFIG.database.name: {
-        'encoding': 'utf8mb4',
-        'collation': 'utf8mb4_general_ci'
-      },
+  'dbs': {
+    NC_CONFIG.database.name: {
+      'encoding': 'utf8mb4',
+      'collation': 'utf8mb4_general_ci'
     },
-    'users': {
-      NC_CONFIG.database.user: {
-        'priv': NC_CONFIG.database.name + '.*:ALL',
-        'pwd': NC_CONFIG.database.pwd,
-        'update_pwd': NC_CONFIG.database.update_password
-      },
+  },
+  'users': {
+    NC_CONFIG.database.user: {
+      'priv': NC_CONFIG.database.name + '.*:ALL',
+      'pwd': NC_CONFIG.database.pwd,
+      'update_pwd': NC_CONFIG.database.update_password
     },
-    'settings': NC_CONFIG.database.settings,
-    'socket': NC_CONFIG.database.socket
-  } }}"  # DO NOT CHANGE!
+  },
+  'settings': NC_CONFIG.database.settings,
+  'socket': NC_CONFIG.database.socket
+} }}"  # DO NOT CHANGE!
 
 SETTING_GRAYLIST: ['redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains']
 NONE_VALUES: [none, '', ' ']
+
+nc_apache_path:
+  serve:
+    path: "{{ NC_CONFIG.config.path_web }}"
