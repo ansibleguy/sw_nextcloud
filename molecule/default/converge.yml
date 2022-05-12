@@ -1,8 +1,11 @@
 ---
 
 - name: Converge
-  hosts: all
+  hosts: grp_targets
+  strategy: free  # speed-up; comment-out to gain clarity
   vars:
+    no_prompts: true  # mariadb prompts
+
     nextcloud:
       enhanced_security: true
       tools: true
