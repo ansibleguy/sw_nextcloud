@@ -2,7 +2,6 @@
 
 - name: Converge
   hosts: grp_targets
-  strategy: free  # speed-up; comment-out to gain clarity
   vars:
     no_prompts: true  # mariadb prompts
 
@@ -33,12 +32,13 @@
 
       apache:
         domain: 'nextcloud.test.ansibleguy.net'
+        ip: '192.168.1.2'
 
       serve:
         path: '/var/www/test/nextcloud'
 
         ssl:
-          mode: 'selfsigned'
+          mode: 'ca'
           cert:
             cn: 'NextCloud'
             org: 'AnsibleGuy Test'

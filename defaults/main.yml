@@ -61,7 +61,7 @@ default_nextcloud:
   php_optional: false  # install optional php-modules
   tools: false  # install admin-tools for disk-space & i/o troubleshooting
   enhanced_security: false  # enable fail2ban and some harder nextcloud settings
-  version: 'latest'  # be aware: dependencies may differ between major versions..
+  version: '24.0.1'  # be aware: dependencies may differ between major versions..
   upgrade: false  # will download current version and install it
 
   manage:
@@ -75,12 +75,13 @@ default_nextcloud:
     path_web: '/var/www/nextcloud'
     admin_user: 'admin'
     # default => random pwd will be generated
-    admin_pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_ncadm chars=ascii_letters,digits length=' + random_pwd_length) }}"
-
+    admin_pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_nc_adm chars=ascii_letters,digits length=' + random_pwd_length) }}"
 
   settings:  # see: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/config_sample_php_parameters.html
     log_type: 'syslog'
     syslog_tag: 'NextCloud'
+    logfile: ''  # syslog
+    loglevel: 2  # 0 = debug, 1 = info, 2 = warn, 3 = error, 4 = fatal
     # default_language:
     # default_locale:
     # defaultapp:
@@ -116,7 +117,7 @@ default_nextcloud:
     # ip:
 
     ssl:  # see: https://github.com/ansibleguy/infra_certs
-      mode: 'selfsigned'  # existing/selfsigned/ca/letsencrypt
+      mode: 'ca'  # existing/selfsigned/ca/letsencrypt
       cert:
         name:
         cn: 'NextCloud Certificate'
@@ -136,7 +137,7 @@ default_nextcloud:
     name: 'nextcloud'
     user: 'nextcloud'
     # default => random pwd will be generated
-    pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_mysql chars=ascii_letters,digits length=' + random_pwd_length) }}"
+    pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_nc_mysql chars=ascii_letters,digits length=' + random_pwd_length) }}"
 
     update_password: 'always'  # or 'on_create'
     settings:
@@ -149,6 +150,7 @@ default_nextcloud:
     # ONLY CHANGE IF DB IS NOT MANAGED BY ROLE!
     type: 'mysql'
     host: 'localhost'
+    # port: 3307
 
   redis:
     port: 6379
@@ -182,7 +184,11 @@ NC_MARIADB_INSTANCE: "{{ {
 
 SETTING_GRAYLIST: ['redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains']
 NONE_VALUES: [none, '', ' ']
+no_prompts: false  # to run the role non-interactively
 
+NC_PHP_DB_HOST: "{% if NC_CONFIG.database.host == 'localhost' %}localhost:{{ NC_CONFIG.database.socket }}{% else %}{{ NC_CONFIG.database.host }}{% if 'port' in NC_CONFIG.database %}:{{ NC_CONFIG.database.port }}{% endif %}{% endif %}"
 nc_apache_path:
   serve:
     path: "{{ NC_CONFIG.config.path_web }}"
+
+nc_installed: false

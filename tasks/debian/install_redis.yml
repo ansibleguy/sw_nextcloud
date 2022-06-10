@@ -28,3 +28,4 @@
     name: 'redis-server.service'
     state: restarted
     enabled: true
+  changed_when: false

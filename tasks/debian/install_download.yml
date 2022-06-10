@@ -19,13 +19,14 @@
 - name: NextCloud | Debian | Install | Download | Unpacking code
   ansible.builtin.unarchive:
     src: '/tmp/nextcloud.tar.bz2'
-    dest: "{{ NC_CONFIG.apache.serve.path }}/.."
+    dest: "{{ NC_CONFIG.config.path_web }}/.."
     remote_src: yes
 
 - name: NextCloud | Debian | Install | Download | Updating file-ownership
   ansible.builtin.file:
     state: directory
-    path: "{{ NC_CONFIG.apache.serve.path }}"
+    path: "{{ NC_CONFIG.config.path_web }}"
     owner: "{{ NC_HC.user }}"
     group: "{{ NC_HC.group }}"
     recurse: true
+  changed_when: false

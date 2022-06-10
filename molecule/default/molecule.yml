@@ -23,18 +23,18 @@ platforms:
     docker_networks:
       - name: 'test-ag-nc'
         ipam_config:
-          - subnet: '192.168.0.0/24'
-            gateway: '192.168.0.254'
+          - subnet: '192.168.1.0/24'
+            gateway: '192.168.1.254'
     networks:
       - name: 'test-ag-nc'
-        ipv4_address: '192.168.0.1'
+        ipv4_address: '192.168.1.1'
     groups: [grp_tester]
     <<: *docker_all
 
   - name: test-ag-nc-1
     networks:
       - name: 'test-ag-nc'
-        ipv4_address: '192.168.0.20'
+        ipv4_address: '192.168.1.2'
     groups: [grp_targets]
     <<: *docker_all
 

@@ -1,8 +1,6 @@
 # {{ ansible_managed }}
 # ansibleguy.sw_nextcloud
 
-# cred
-
 # configuration for PHP MySQL module
 extension=pdo_mysql.so
 
@@ -12,10 +10,12 @@ mysql.allow_persistent=On
 mysql.cache_size=2000
 mysql.max_persistent=-1
 mysql.max_links=-1
-mysql.default_port=
-mysql.default_socket={{ NC_CONFIG.database.socket }}
-mysql.default_host=
-mysql.default_user=
-mysql.default_password=
 mysql.connect_timeout=60
 mysql.trace_mode=Off
+mysql.default_host={{ NC_CONFIG.database.host }}
+mysql.default_user=
+mysql.default_password=
+mysql.default_socket=
+{% if 'port' in NC_CONFIG.database %}
+mysql.default_port={{ NC_CONFIG.database.port }}
+{% endif %}

@@ -16,7 +16,7 @@ disable_classes =
 zend.enable_gc = On
 zend.exception_ignore_args = On
 zend.exception_string_param_max_len = 0
-open_basedir = {{ NC_CONFIG.apache.serve.path }}/:/dev/urandom
+open_basedir = {{ NC_CONFIG.config.path_web }}/:/dev/urandom
 
 ; Miscellaneous ;
 expose_php = On

@@ -1,4 +1,4 @@
-[![NextCloud](https://nextcloud.com/wp-content/themes/next/assets/img/logo/nextcloud-logo.svg)](https://nextcloud.com/)
+[![NextCloud](https://nextcloud.com/media/nextcloud-logo.svg)](https://nextcloud.com/)
 
 # Ansible Role - NextCloud deployment
 Ansible Role to deploy NextCloud on a linux server.
@@ -97,10 +97,11 @@ nextcloud:
   apache:
     domain: 'nextcloud.template.ansibleguy.net'
     aliases: ['nc.template.ansibleguy.net']
+    ip: '192.168.0.100'  # else access via ip will be 'untrusted'
 
     ssl:
-      mode: 'letsencrypt'  # or selfsigned
-      #  if you use 'selfsigned':
+      mode: 'letsencrypt'  # or selfsigned/ca
+      #  if you use 'selfsigned' or 'ca':
       #    cert:
       #      cn: 'NextCloud Server'
       #      org: 'AnsibleGuy'

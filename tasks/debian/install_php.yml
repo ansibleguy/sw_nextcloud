@@ -21,15 +21,13 @@
 
 - name: NextCloud | Debian | Install | PHP | Required PHP Modules
   ansible.builtin.apt:
-    name: "php{{ NC_HC.php.version }}-{{ item }}"
+    name: "{{ NC_HC.packages.php_modules | php_pkg_list(NC_HC.php.version) }}"
     state: present
-  loop: "{{ NC_HC.packages.php_modules }}"
 
 - name: NextCloud | Debian | Install | PHP | Optional PHP Modules
   ansible.builtin.apt:
-    name: "php{{ NC_HC.php.version }}-{{ item }}"
+    name: "{{ NC_HC.packages.php_modules_optional | php_pkg_list(NC_HC.php.version) }}"
     state: present
-  loop: "{{ NC_HC.packages.php_modules_optional }}"
   when: NC_CONFIG.php_optional
 
 - name: NextCloud | Debian | Install | PHP | Enabling PHP-FPM

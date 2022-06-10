@@ -21,3 +21,4 @@
     name: "php{{ NC_HC.php.version }}-fpm.service"
     state: restarted
   tags: [config, php]
+  changed_when: false

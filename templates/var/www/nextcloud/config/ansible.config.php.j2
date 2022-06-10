@@ -1,6 +1,3 @@
-; {{ ansible_managed }}
-; ansibleguy.sw_nextcloud
-
 <?php
 $CONFIG = array (
   'trusted_domains' => [
@@ -18,7 +15,7 @@ $CONFIG = array (
   'datadirectory' => '{{ NC_CONFIG.config.path_data }}',
   'dbtype' => 'mysql',
   'dbname' => '{{ NC_CONFIG.database.name }}',
-  'dbhost' => 'localhost',
+  'dbhost' => '{{ NC_PHP_DB_HOST }}',
   'dbtableprefix' => 'oc_',
   'dbuser' => '{{ NC_CONFIG.database.user }}',
   'dbpassword' => '{{ NC_CONFIG.database.pwd }}',
