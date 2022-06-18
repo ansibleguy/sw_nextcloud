@@ -62,6 +62,10 @@ Ansible Role to deploy NextCloud on a linux server.
 
   If you have experience in that field => you are welcome to point out any possible optimizations. Just open an issue (:
 
+
+* **Info:** You might need to add the server's certificate to your browser's exceptions if you use the 'selfsigned' or 'ca' certificate-type.
+
+
 ## Setup
 For this role to work - you must install its dependencies first:
 
