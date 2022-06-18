@@ -7,7 +7,7 @@ Ansible Role to deploy NextCloud on a linux server.
 [![Ansible Galaxy Downloads](https://img.shields.io/badge/dynamic/json?color=blueviolet&label=Galaxy%20Downloads&query=%24.download_count&url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv1%2Froles%2F59111%2F%3Fformat%3Djson)](https://galaxy.ansible.com/ansibleguy/sw_nextcloud)
 
 **Tested:**
-* None
+* Debian 11
 
 
 ## Functionality
@@ -34,12 +34,9 @@ Ansible Role to deploy NextCloud on a linux server.
   * Default config:
     * Logging to syslog
     * Upload size limit 20GB
-    * Self-Signed certificate
+    * Certificate signed by minimal CA
 
 ## Info
-
-* **Warning:** THIS ROLE IS NOT YET IN A STABLE STATE!
-
 
 * **Note:** Most of this functionality can be opted in or out using the main defaults file and variables!
 
@@ -56,7 +53,7 @@ Ansible Role to deploy NextCloud on a linux server.
 
 * **Note:** You can configure any target version of NextCloud to be installed!
 
-BE AWARE that the hardcoded dependencies might not 
+  **BE AWARE that** the hardcoded dependencies might not work with all versions!
 
 
 * **Disclaimer:** I'm not an expert regarding PHP-Setups - therefore some default settings might not be optimal.

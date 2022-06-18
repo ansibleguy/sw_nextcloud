@@ -124,7 +124,7 @@ default_nextcloud:
         org: 'AnsibleGuy'
 
     config_additions:
-      - '<Directory /var/www/nextcloud/>'  # todo: change with serve-root; maybe implement some placeholder at apache-role-level
+      - '<Directory /var/www/nextcloud/>'  # todo: change with 'path_web'; maybe implement some placeholder at apache-role-level
       - '  Require all granted'
       - '  AllowOverride All'
       - '  Options FollowSymLinks MultiViews'
@@ -132,6 +132,9 @@ default_nextcloud:
       - '    Dav off'
       - '  </IfModule>'
       - '</Directory>'
+
+    security:
+      restrict_methods: false  # nextCloud uses webDAV
 
   database:
     name: 'nextcloud'
