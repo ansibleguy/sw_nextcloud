@@ -4,12 +4,24 @@
   ansible.builtin.stat:
     path: "{{ NC_CONFIG.config.path_web }}/config/config.php"
   register: nc_src_test
+  tags: [upgrade]
 
 - name: NextCloud | Debian | Install | Download
   ansible.builtin.import_tasks: install_download.yml
-  when: >
-    not nc_src_test.stat.exists or
-    NC_CONFIG.upgrade
+  when: not nc_src_test.stat.exists
+
+- name: NextCloud | Debian | Install | Running NextCloud upgrade
+  become_user: "{{ NC_HC.user }}"
+  become: yes
+  command: "php{{ NC_HC.php.version }} {{ NC_CONFIG.config.path_web }}/updater/updater.phar --no-interaction"
+  args:
+    chdir: "{{ NC_CONFIG.config.path_web }}"
+  when:
+    - NC_CONFIG.upgrade
+    - nc_src_test.stat.exists
+  tags: [upgrade]
+  register: nc_installed
+  changed_when: "'No update available' not in nc_installed.stdout"
 
 - name: NextCloud | Debian | Install | Copying nextcloud config
   ansible.builtin.template:
@@ -18,6 +30,7 @@
     owner: "{{ NC_HC.user }}"
     group: "{{ NC_HC.group }}"
     mode: 0750
+  tags: [upgrade]
 
 - name: NextCloud | Debian | Install | Updating file-ownership
   ansible.builtin.file:
@@ -27,6 +40,7 @@
     group: "{{ NC_HC.group }}"
     recurse: true
   changed_when: false
+  tags: [upgrade]
 
 - name: NextCloud | Debian | Install | Running NextCloud installation
   become_user: "{{ NC_HC.user }}"
@@ -43,7 +57,5 @@
     --data-dir "{{ NC_CONFIG.config.path_data }}"
   args:
     chdir: "{{ NC_CONFIG.config.path_web }}"
-  when: >
-    not nc_src_test.stat.exists
-    or NC_CONFIG.upgrade
+  when: not nc_src_test.stat.exists
   register: nc_installed

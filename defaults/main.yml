@@ -61,7 +61,7 @@ default_nextcloud:
   php_optional: false  # install optional php-modules
   tools: false  # install admin-tools for disk-space & i/o troubleshooting
   enhanced_security: false  # enable fail2ban and some harder nextcloud settings
-  version: '24.0.1'  # be aware: dependencies may differ between major versions..
+  version: '24.0.3'  # be aware: dependencies may differ between major versions..
   upgrade: false  # will download current version and install it
 
   manage:
@@ -99,10 +99,11 @@ default_nextcloud:
   php:
     # settings will be replaced or appended
     srv:
-      # max upload file-size
-      post_max_size: 20480M  # 10GB
-      upload_max_filesize: 20480M
+      post_max_size: '100G'
+      upload_max_filesize: '100G'
       timezone: 'Europe/Vienna'
+      memory_limit: '512M'  # if you have more RAM available => you should increase this value! or set to '-1' to NOT LIMIT it at all
+      'apc.enable_cli': 1
     fpm:
       listen: '127.0.0.1:9000'
     fpm_pool: {}
@@ -122,6 +123,9 @@ default_nextcloud:
         name:
         cn: 'NextCloud Certificate'
         org: 'AnsibleGuy'
+
+    config:
+      LimitRequestBody: 0  # unlimited body size for uploads; is limited by php
 
     config_additions:
       - '<Directory /var/www/nextcloud/>'  # todo: change with 'path_web'; maybe implement some placeholder at apache-role-level

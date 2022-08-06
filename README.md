@@ -66,6 +66,10 @@ Ansible Role to deploy NextCloud on a linux server.
 * **Info:** You might need to add the server's certificate to your browser's exceptions if you use the 'selfsigned' or 'ca' certificate-type.
 
 
+* **Info:** The machine running NextCloud should AT LEAST have 1GB of RAM to run somewhat OK.
+
+  2-4GB would be recommended for entry-level setups. You might want/have to update the php memory-limit ```nextcloud.php.srv.memory_limit```if you have more than 1GB available!
+
 ## Setup
 For this role to work - you must install its dependencies first:
 
@@ -83,10 +87,16 @@ Define the nextcloud dictionary as needed.
 nextcloud:
   enhanced_security: true
   tools: true  # install useful admin-tools
+
+  # version: '24.0.3'
+  # upgrade: true => set to upgrade to newer version
   
   php:  # php config-file overrides
     srv:
       timezone: 'Europe/Vienna'
+      memory_limit: '2G'
+      post_max_size: '200G'
+      upload_max_filesize: '200G'
   
   settings:  # nextcloud config-file overrides
     path_data: '/mnt/data'
