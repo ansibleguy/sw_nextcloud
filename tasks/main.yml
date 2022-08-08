@@ -16,7 +16,7 @@
   ansible.builtin.debug:
     msg: "Admin-User: '{{ NC_CONFIG.config.admin_user }}',
       Admin-Password: '{{ NC_CONFIG.config.admin_pwd }}'"
-  when: nc_installed
+  when: nc_installed.changed
 
 - name: NextCloud | Ask User
   ansible.builtin.pause:
