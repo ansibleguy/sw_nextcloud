@@ -7,7 +7,7 @@
   gather_facts: yes
   vars:
     nextcloud:
-      nginx:
+      apache:
         domain: 'some.guy.net'
         aliases: ['other.guy.net']
         ip: '192.168.24.20'

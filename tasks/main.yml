@@ -45,3 +45,6 @@
     - "{{ tmp_pwd_file_prefix }}_nc_mysql"
     - "{{ tmp_pwd_file_prefix }}_redis"
     - "{{ tmp_pwd_file_prefix }}_nc_adm"
+  delegate_to: localhost
+  become: false
+  changed_when: false
