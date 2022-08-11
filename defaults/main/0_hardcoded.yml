@@ -1,0 +1,59 @@
+---
+
+random_pwd_length: '50'  # must be string-type
+tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_nextcloud'
+SETTING_GRAYLIST: ['redis', 'dbtype', 'dbname', 'dbhost', 'dbuser', 'dbpassword', 'trusted_domains']
+NONE_VALUES: [none, '', ' ']
+nc_installed: false
+
+NC_HC:  # 'hardcoded' defaults => should not be changed
+  packages:
+    base: ['libxml2', 'ffmpeg', 'gpg', 'acl']  # NOTE: 'acl' needed to let ansible become www-data
+    php_base: ['libapache2-mod-php']
+    php_modules: [
+       # libxml,openssl,session,zlib = enabled by default
+       # json = sub-package of fpm
+       # simplexml, xmlreader, xmlwriter = xml
+      'fpm', 'ctype', 'curl', 'dom', 'gd', 'mbstring', 'posix', 'xml', 'zip',
+      # db connection
+      'pdo-mysql',
+      # recommended
+      'fileinfo', 'bz2', 'intl',
+      # required for features
+      'ldap', 'smbclient', 'ftp', 'imap', 'bcmath', 'gmp',
+      # enhance performance
+      'redis', 'opcache',
+    ]
+    php_modules_optional: [
+      'phar', 'imagick', 'exif',
+    ]
+    redis: ['redis-server']
+    security: ['fail2ban']
+    tools: ['ncdu', 'iotop', 'iftop']  # disk-space & i/o troubleshooting tools one might need in combination with nextcloud
+
+  nc_secure_settings:
+    session_lifetime: 21600  # 6h
+    token_auth_enforced: 'true'
+    token_auth_activity_update: 60
+
+  user: 'www-data'
+  group: 'www-data'
+  php:
+    version: '8.0'
+    repo_key: 'https://packages.sury.org/php/apt.gpg'
+    repo: "deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main"
+    path_log: '/var/log/php'
+
+  nc:
+    download_url: 'https://download.nextcloud.com/server/releases'
+
+  apache:
+    modules:
+      present: ['ssl', 'headers', 'rewrite', 'http2', 'env', 'dir', 'mime']
+
+    security:
+      restrict_methods: false
+
+    headers:
+      'Referrer-Policy': 'no-referrer'
+      'X-Robots-Tag': 'none'

@@ -1,0 +1,5 @@
+---
+
+nc_apache_path:
+  serve:
+    path: "{{ NC_CONFIG.config.path_web }}"

@@ -1,0 +1,21 @@
+---
+
+NC_MARIADB_INSTANCE: "{{ {
+  'dbs': {
+    NC_CONFIG.database.name: {
+      'encoding': 'utf8mb4',
+      'collation': 'utf8mb4_general_ci'
+    },
+  },
+  'users': {
+    NC_CONFIG.database.user: {
+      'priv': NC_CONFIG.database.name + '.*:ALL',
+      'pwd': NC_CONFIG.database.pwd,
+      'update_pwd': NC_CONFIG.database.update_password
+    },
+  },
+  'settings': NC_CONFIG.database.settings,
+  'socket': NC_CONFIG.database.socket
+} }}"  # DO NOT CHANGE!
+
+NC_PHP_DB_HOST: "{% if NC_CONFIG.database.host == 'localhost' %}localhost:{{ NC_CONFIG.database.socket }}{% else %}{{ NC_CONFIG.database.host }}{% if 'port' in NC_CONFIG.database %}:{{ NC_CONFIG.database.port }}{% endif %}{% endif %}"
