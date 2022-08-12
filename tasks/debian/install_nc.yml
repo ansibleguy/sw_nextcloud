@@ -13,7 +13,7 @@
 - name: NextCloud | Debian | Install | Running NextCloud upgrade
   become_user: "{{ NC_HC.user }}"
   become: yes
-  command: "php{{ NC_HC.php.version }} {{ NC_CONFIG.config.path_web }}/updater/updater.phar --no-interaction"
+  ansible.builtin.command: "php{{ NC_HC.php.version }} {{ NC_CONFIG.config.path_web }}/updater/updater.phar --no-interaction"
   args:
     chdir: "{{ NC_CONFIG.config.path_web }}"
   when:
@@ -45,7 +45,7 @@
 - name: NextCloud | Debian | Install | Running NextCloud installation
   become_user: "{{ NC_HC.user }}"
   become: yes
-  command: >
+  ansible.builtin.command: >
     php{{ NC_HC.php.version }} occ maintenance:install
     --database "{{ NC_CONFIG.database.type }}"
     --database-host "{{ NC_PHP_DB_HOST }}"

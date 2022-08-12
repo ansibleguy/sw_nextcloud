@@ -18,4 +18,8 @@ NC_MARIADB_INSTANCE: "{{ {
   'socket': NC_CONFIG.database.socket
 } }}"  # DO NOT CHANGE!
 
-NC_PHP_DB_HOST: "{% if NC_CONFIG.database.host == 'localhost' %}localhost:{{ NC_CONFIG.database.socket }}{% else %}{{ NC_CONFIG.database.host }}{% if 'port' in NC_CONFIG.database %}:{{ NC_CONFIG.database.port }}{% endif %}{% endif %}"
+NC_PHP_DB_HOST: "{% if NC_CONFIG.database.host == 'localhost' %}\
+localhost:{{ NC_CONFIG.database.socket }}\
+{% else %}{{ NC_CONFIG.database.host }}\
+{% if 'port' in NC_CONFIG.database %}:{{ NC_CONFIG.database.port }}{% endif %}\
+{% endif %}"

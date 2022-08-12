@@ -3,6 +3,9 @@
 # Ansible Role - NextCloud deployment
 Ansible Role to deploy NextCloud on a linux server.
 
+[![Molecule Test Status](https://badges.ansibleguy.net/sw_nextcloud.molecule.svg)](https://molecule.readthedocs.io/en/latest/)
+[![YamlLint Test Status](https://badges.ansibleguy.net/sw_nextcloud.yamllint.svg)](https://yamllint.readthedocs.io/en/stable/)
+[![Ansible-Lint Test Status](https://badges.ansibleguy.net/sw_nextcloud.ansiblelint.svg)](https://ansible-lint.readthedocs.io/en/latest/)
 [![Ansible Galaxy](https://img.shields.io/ansible/role/59111)](https://galaxy.ansible.com/ansibleguy/sw_nextcloud)
 [![Ansible Galaxy Downloads](https://img.shields.io/badge/dynamic/json?color=blueviolet&label=Galaxy%20Downloads&query=%24.download_count&url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv1%2Froles%2F59111%2F%3Fformat%3Djson)](https://galaxy.ansible.com/ansibleguy/sw_nextcloud)
 

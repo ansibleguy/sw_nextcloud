@@ -15,6 +15,7 @@
     url: "{{ nc_dl }}"
     dest: '/tmp/nextcloud.tar.bz2'
     checksum: "sha256:{{ nc_dl }}.sha256"
+    mode: 0644
 
 - name: NextCloud | Debian | Install | Download | Unpacking code
   ansible.builtin.unarchive:

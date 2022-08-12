@@ -11,9 +11,9 @@ NC_HC:  # 'hardcoded' defaults => should not be changed
     base: ['libxml2', 'ffmpeg', 'gpg', 'acl']  # NOTE: 'acl' needed to let ansible become www-data
     php_base: ['libapache2-mod-php']
     php_modules: [
-       # libxml,openssl,session,zlib = enabled by default
-       # json = sub-package of fpm
-       # simplexml, xmlreader, xmlwriter = xml
+      # libxml,openssl,session,zlib = enabled by default
+      # json = sub-package of fpm
+      # simplexml, xmlreader, xmlwriter = xml
       'fpm', 'ctype', 'curl', 'dom', 'gd', 'mbstring', 'posix', 'xml', 'zip',
       # db connection
       'pdo-mysql',
