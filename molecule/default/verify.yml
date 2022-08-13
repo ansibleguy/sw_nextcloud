@@ -44,4 +44,4 @@
       return_content: yes
       validate_certs: false
     register: page
-    failed_when: "'NextCloud' not in page.content"
+    failed_when: "'Nextcloud' not in page.content"
