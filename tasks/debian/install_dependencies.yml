@@ -6,7 +6,7 @@
     path: "{{ NC_CONFIG.config.path_data }}"
     owner: "{{ NC_HC.user }}"
     group: "{{ NC_HC.group }}"
-    mode: 0755
+    mode: 0750
 
 - name: NextCloud | Debian | Install | Packages
   ansible.builtin.apt:

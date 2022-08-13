@@ -5,6 +5,7 @@
     name: "{{ NC_HC.packages.redis }}"
     state: present
 
+# todo: fix that db pwd changes every run
 - name: NextCloud | Debian | Install | Redis | Config
   ansible.builtin.template:
     src: 'templates/etc/redis/redis.conf.j2'

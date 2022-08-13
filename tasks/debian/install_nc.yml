@@ -23,6 +23,7 @@
   register: nc_installed
   changed_when: "'No update available' not in nc_installed.stdout"
 
+# todo: fix that db pwd changes every run
 - name: NextCloud | Debian | Install | Copying nextcloud config
   ansible.builtin.template:
     src: 'templates/var/www/nextcloud/config/ansible.config.php.j2'

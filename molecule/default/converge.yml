@@ -27,7 +27,7 @@
       settings:
         default_language: 'en'
         default_locale: 'de_AT'
-        mail_from_address: 'nextcloud@mail.test.ansibleguy.net'
+        mail_from_address: 'testmaster@ansibleguy.net'
         mail_smtphost: 'mail.test.ansibleguy.net'
 
       apache:
@@ -42,7 +42,7 @@
           cert:
             cn: 'NextCloud'
             org: 'AnsibleGuy Test'
-            email: 'webmaster@mail.test.ansibleguy.net'
+            email: 'testmaster@ansibleguy.net'
 
   roles:
     - ansibleguy.sw_nextcloud
