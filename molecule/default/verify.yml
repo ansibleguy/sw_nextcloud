@@ -1,12 +1,46 @@
 ---
 
 - name: Verify
+  hosts: grp_targets
+  gather_facts: false
+  tasks:
+    - name: Checking that services are running and enabled
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      check_mode: true
+      register: svc_test
+      loop:
+        - 'mariadb@nextcloud.service'
+        - 'apache2.service'
+      failed_when: svc_test.changed
+
+    - name: Checking that services survive restart
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - 'mariadb@nextcloud.service'
+        - 'apache2.service'
+
+    - name: Checking ports
+      ansible.builtin.wait_for:
+        port: "{{ item }}"
+        timeout: 1
+        msg: "Checking port {{ item }}"
+      ignore_errors: true
+      loop:
+        - 80
+        - 443
+
+- name: Verify
   hosts: grp_tester
   gather_facts: false
   tasks:
   - name: Checking if nextcloud web-service is reachable
     ansible.builtin.uri:
-      url: 'https://192.168.1.2'
+      url: 'https://nextcloud.test.ansibleguy.net'
       return_content: yes
       validate_certs: false
     register: page

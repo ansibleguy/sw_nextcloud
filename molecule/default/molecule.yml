@@ -29,6 +29,7 @@ platforms:
       - name: 'test-ag-nc'
         ipv4_address: '192.168.1.1'
     groups: [grp_tester]
+    etc_hosts: {nextcloud.test.ansibleguy.net: '192.168.1.2'}
     <<: *docker_all
 
   - name: test-ag-nc-1
