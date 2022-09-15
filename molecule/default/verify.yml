@@ -37,10 +37,10 @@
   hosts: grp_tester
   gather_facts: false
   tasks:
-  - name: Checking if nextcloud web-service is reachable
-    ansible.builtin.uri:
-      url: 'https://nextcloud.test.ansibleguy.net'
-      return_content: yes
-      validate_certs: false
-    register: page
-    failed_when: "'Nextcloud' not in page.content"
+    - name: Checking if nextcloud web-service is reachable
+      ansible.builtin.uri:
+        url: 'https://nextcloud.test.ansibleguy.net'
+        return_content: yes
+        validate_certs: false
+      register: page
+      failed_when: "'Nextcloud' not in page.content"
