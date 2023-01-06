@@ -14,6 +14,8 @@
     group: 'redis'
     mode: 0640
   tags: [config]
+  no_log: true  # since passwords are written to the file
+  changed_when: false
 
 - name: NextCloud | Debian | Install | Redis | Setting custom config
   ansible.builtin.lineinfile:

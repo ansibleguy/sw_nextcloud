@@ -32,6 +32,8 @@
     group: "{{ NC_HC.group }}"
     mode: 0750
   tags: [upgrade]
+  no_log: true  # since passwords are written to the file
+  changed_when: false
 
 - name: NextCloud | Debian | Install | Updating file-ownership
   ansible.builtin.file:
