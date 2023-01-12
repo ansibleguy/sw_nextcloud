@@ -12,6 +12,17 @@ Ansible Role to deploy NextCloud on a linux server.
 **Tested:**
 * Debian 11
 
+## Install
+
+```bash
+ansible-galaxy install ansibleguy.sw_nextcloud
+
+# or to custom role-path
+ansible-galaxy install ansibleguy.sw_nextcloud --roles-path ./roles
+
+# install dependencies
+ansible-galaxy install -r requirements.yml
+```
 
 ## Functionality
 
@@ -75,12 +86,6 @@ Ansible Role to deploy NextCloud on a linux server.
 
   2-4GB would be recommended for entry-level setups. You might want/have to update the php memory-limit ```nextcloud.php.srv.memory_limit```if you have more than 1GB available!
 
-## Setup
-For this role to work - you must install its dependencies first:
-
-```
-ansible-galaxy install -r requirements.yml
-```
 
 ## Usage
 
