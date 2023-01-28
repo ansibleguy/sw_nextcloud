@@ -48,6 +48,9 @@
         nextcloud: "{{ nc_apache_path | combine(NC_CONFIG.apache, recursive=true) }}"
   no_log: true
   tags: [config, certs]
+  args:
+    apply:
+      tags: [config, certs]
   when: NC_CONFIG.manage.webserver
 
 - name: NextCloud | Debian | Install | Setting up MariaDB instance
@@ -63,3 +66,6 @@
     - NC_CONFIG.database.host == 'localhost'
     - NC_CONFIG.database.type == 'mysql'
   tags: [config, db]
+  args:
+    apply:
+      tags: [config, db]
