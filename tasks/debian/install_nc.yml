@@ -60,5 +60,6 @@
     --data-dir "{{ NC_CONFIG.config.path_data }}"
   args:
     chdir: "{{ NC_CONFIG.config.path_web }}"
+  changed_when: false
   when: not nc_src_test.stat.exists
   register: nc_installed
