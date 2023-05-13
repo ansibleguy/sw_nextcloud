@@ -114,5 +114,3 @@ defaults_nc:
 
   fail2ban:
     path_log: '/var/log/fail2ban'
-
-NC_CONFIG: "{{ defaults_nc | combine(nextcloud, recursive=true) }}"
