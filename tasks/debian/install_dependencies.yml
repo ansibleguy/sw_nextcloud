@@ -15,7 +15,7 @@
 
 - name: NextCloud | Debian | Install | PHP
   ansible.builtin.import_tasks: install_php.yml
-  when: NC_CONFIG.manage.php
+  when: NC_CONFIG.manage.php | bool
   tags: [php]
 
 - name: NextCloud | Debian | Install | Tools
@@ -33,7 +33,7 @@
 - name: NextCloud | Debian | Install | Redis
   ansible.builtin.import_tasks: install_redis.yml
   when:
-    - NC_CONFIG.manage.redis
+    - NC_CONFIG.manage.redis | bool
     - NC_CONFIG.redis.host == 'localhost'
 
 - name: NextCloud | Debian | Install | Configuring Apache sites
@@ -51,7 +51,7 @@
   args:
     apply:
       tags: [config, certs]
-  when: NC_CONFIG.manage.webserver
+  when: NC_CONFIG.manage.webserver | bool
 
 - name: NextCloud | Debian | Install | Setting up MariaDB instance
   ansible.builtin.include_role:
@@ -62,7 +62,7 @@
         nextcloud: "{{ NC_MARIADB_INSTANCE }}"
   no_log: true
   when:
-    - NC_CONFIG.manage.db
+    - NC_CONFIG.manage.db | bool
     - NC_CONFIG.database.host == 'localhost'
     - NC_CONFIG.database.type == 'mysql'
   tags: [config, db]

@@ -5,7 +5,7 @@
 
 - name: NextCloud | Debian | Configure PHP
   ansible.builtin.import_tasks: config_php.yml
-  when: NC_CONFIG.manage.php
+  when: NC_CONFIG.manage.php | bool
   tags: [config, php]
 
 - name: NextCloud | Debian | Installing NextCloud
