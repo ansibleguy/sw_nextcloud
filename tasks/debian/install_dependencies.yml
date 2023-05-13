@@ -1,6 +1,6 @@
 ---
 
-- name: NextCloud | Debian | Install | Creating directories
+- name: NextCloud | Install | Creating directories
   ansible.builtin.file:
     state: directory
     path: "{{ NC_CONFIG.config.path_data }}"
@@ -8,35 +8,35 @@
     group: "{{ NC_HC.group }}"
     mode: 0750
 
-- name: NextCloud | Debian | Install | Packages
+- name: NextCloud | Install | Packages
   ansible.builtin.apt:
     name: "{{ NC_HC.packages.base }}"
     state: present
 
-- name: NextCloud | Debian | Install | PHP
+- name: NextCloud | Install | PHP
   ansible.builtin.import_tasks: install_php.yml
   when: NC_CONFIG.manage.php | bool
   tags: [php]
 
-- name: NextCloud | Debian | Install | Tools
+- name: NextCloud | Install | Tools
   ansible.builtin.apt:
     name: "{{ NC_HC.packages.tools }}"
     state: present
   when: NC_CONFIG.tools
 
-- name: NextCloud | Debian | Install | Security packages
+- name: NextCloud | Install | Security packages
   ansible.builtin.apt:
     name: "{{ NC_HC.packages.security }}"
     state: present
   when: NC_CONFIG.enhanced_security
 
-- name: NextCloud | Debian | Install | Redis
+- name: NextCloud | Install | Redis
   ansible.builtin.import_tasks: install_redis.yml
   when:
     - NC_CONFIG.manage.redis | bool
     - NC_CONFIG.redis.host == 'localhost'
 
-- name: NextCloud | Debian | Install | Configuring Apache sites
+- name: NextCloud | Install | Configuring Apache sites
   ansible.builtin.include_role:
     name: ansibleguy.infra_apache
   vars:
@@ -53,7 +53,7 @@
       tags: [config, certs]
   when: NC_CONFIG.manage.webserver | bool
 
-- name: NextCloud | Debian | Install | Setting up MariaDB instance
+- name: NextCloud | Install | Setting up MariaDB instance
   ansible.builtin.include_role:
     name: ansibleguy.infra_mariadb
   vars:

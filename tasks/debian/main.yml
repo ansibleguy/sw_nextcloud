@@ -1,22 +1,22 @@
 ---
 
-- name: NextCloud | Debian | Installing dependencies
+- name: NextCloud | Installing dependencies
   ansible.builtin.import_tasks: install_dependencies.yml
 
-- name: NextCloud | Debian | Configure PHP
+- name: NextCloud | Configure PHP
   ansible.builtin.import_tasks: config_php.yml
   when: NC_CONFIG.manage.php | bool
   tags: [config, php]
 
-- name: NextCloud | Debian | Installing NextCloud
+- name: NextCloud | Installing NextCloud
   ansible.builtin.import_tasks: install_nc.yml
 
-- name: NextCloud | Debian | Security
+- name: NextCloud | Security
   ansible.builtin.import_tasks: config_security.yml
   when: NC_CONFIG.enhanced_security
   tags: [config]
 
-- name: NextCloud | Debian | Install | PHP | Restarting PHP-FPM
+- name: NextCloud | Install | PHP | Restarting PHP-FPM
   ansible.builtin.systemd:
     name: "php{{ NC_HC.php.version }}-fpm.service"
     state: restarted

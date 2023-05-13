@@ -1,6 +1,6 @@
 ---
 
-- name: NextCloud | Debian | PHP | Copying client config
+- name: NextCloud | PHP | Copying client config
   ansible.builtin.template:
     src: 'templates/etc/php/v/cli/php.ini.j2'
     dest: "/etc/php/{{ NC_HC.php.version }}/cli/php.ini"
@@ -8,7 +8,7 @@
     group: 'root'
     mode: 0644
 
-- name: NextCloud | Debian | PHP | Copying fpm config
+- name: NextCloud | PHP | Copying fpm config
   ansible.builtin.template:
     src: "templates/etc/php/v/{{ item }}.j2"
     dest: "/etc/php/{{ NC_HC.php.version }}/{{ item }}"
@@ -21,7 +21,7 @@
     - 'fpm/pool.d/www.conf'
   changed_when: false
 
-- name: NextCloud | Debian | PHP | Setting custom server config
+- name: NextCloud | PHP | Setting custom server config
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ NC_HC.php.version }}/fpm/php.ini"
     regexp: "^{{ item.key }} ="
@@ -31,7 +31,7 @@
   when: NC_CONFIG.php.srv | length > 0
   changed_when: false
 
-- name: NextCloud | Debian | PHP | Setting custom FPM config
+- name: NextCloud | PHP | Setting custom FPM config
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ NC_HC.php.version }}/fpm/php-fpm.conf"
     regexp: "^{{ item.key }} ="
@@ -40,7 +40,7 @@
   when: NC_CONFIG.php.fpm | length > 0
   changed_when: false
 
-- name: NextCloud | Debian | PHP | Setting custom FPM config
+- name: NextCloud | PHP | Setting custom FPM config
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ NC_HC.php.version }}/fpm/pool.d/www.conf"
     regexp: "^{{ item.key }} ="
@@ -49,7 +49,7 @@
   when: NC_CONFIG.php.fpm_pool | length > 0
   changed_when: false
 
-- name: NextCloud | Debian | PHP | Setting custom client config
+- name: NextCloud | PHP | Setting custom client config
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ NC_HC.php.version }}/cli/php.ini"
     regexp: "^{{ item.key }} ="
@@ -59,7 +59,7 @@
   when: NC_CONFIG.php.cli | length > 0
   changed_when: false
 
-- name: NextCloud | Debian | PHP | Copying mysql config
+- name: NextCloud | PHP | Copying mysql config
   ansible.builtin.template:
     src: "templates/etc/php/v/mods-available/mysql.ini.j2"
     dest: "/etc/php/{{ NC_HC.php.version }}/mods-available/mysql.ini"
@@ -67,7 +67,7 @@
     group: 'root'
     mode: 0640
 
-- name: NextCloud | Debian | PHP | Starting/enabling PHP-FPM
+- name: NextCloud | PHP | Starting/enabling PHP-FPM
   ansible.builtin.systemd:
     name: "php{{ NC_HC.php.version }}-fpm.service"
     state: restarted

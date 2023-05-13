@@ -1,6 +1,6 @@
 ---
 
-- name: NextCloud | Debian | Security | Creating directories
+- name: NextCloud | Security | Creating directories
   ansible.builtin.file:
     state: directory
     path: "{{ item }}"
@@ -12,7 +12,7 @@
     - '/etc/fail2ban/jail.d'
     - '/etc/fail2ban/filter.d'
 
-- name: NextCloud | Debian | Security | Copying fail2ban config
+- name: NextCloud | Security | Copying fail2ban config
   ansible.builtin.template:
     src: 'templates/etc/fail2ban/{{ item }}.j2'
     dest: "/etc/fail2ban/{{ item }}"
@@ -23,7 +23,7 @@
     - 'jail.d/nextcloud.local'
     - 'filter.d/nextcloud.conf'
 
-- name: NextCloud | Debian | Security | Starting/enabling fail2ban
+- name: NextCloud | Security | Starting/enabling fail2ban
   ansible.builtin.systemd:
     name: 'fail2ban.service'
     state: started

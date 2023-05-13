@@ -1,12 +1,12 @@
 ---
 
-- name: NextCloud | Debian | Install | Redis | Package
+- name: NextCloud | Install | Redis | Package
   ansible.builtin.apt:
     name: "{{ NC_HC.packages.redis }}"
     state: present
 
 # todo: fix that db pwd changes every run
-- name: NextCloud | Debian | Install | Redis | Config
+- name: NextCloud | Install | Redis | Config
   ansible.builtin.template:
     src: 'templates/etc/redis/redis.conf.j2'
     dest: '/etc/redis/redis.conf'
@@ -17,7 +17,7 @@
   no_log: true  # since passwords are written to the file
   changed_when: false
 
-- name: NextCloud | Debian | Install | Redis | Setting custom config
+- name: NextCloud | Install | Redis | Setting custom config
   ansible.builtin.lineinfile:
     path: '/etc/redis/redis.conf'
     regexp: "^{{ item.key }} "
@@ -26,7 +26,7 @@
   when: NC_CONFIG.redis.settings | length > 0
   tags: [config]
 
-- name: NextCloud | Debian | Install | Redis | Starting/enabling
+- name: NextCloud | Install | Redis | Starting/enabling
   ansible.builtin.systemd:
     name: 'redis-server.service'
     state: restarted
