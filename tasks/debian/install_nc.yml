@@ -1,16 +1,16 @@
 ---
 
-- name: NextCloud | Debian | Install | Checking if NextCloud code exists
+- name: NextCloud | Install | Checking if NextCloud code exists
   ansible.builtin.stat:
     path: "{{ NC_CONFIG.config.path_web }}/config/config.php"
   register: nc_src_test
   tags: [upgrade]
 
-- name: NextCloud | Debian | Install | Download
+- name: NextCloud | Install | Download
   ansible.builtin.import_tasks: install_download.yml
   when: not nc_src_test.stat.exists
 
-- name: NextCloud | Debian | Install | Running NextCloud upgrade
+- name: NextCloud | Install | Running NextCloud upgrade
   become_user: "{{ NC_HC.user }}"
   become: yes
   ansible.builtin.command: "php{{ NC_HC.php.version }} {{ NC_CONFIG.config.path_web }}/updater/updater.phar --no-interaction"
@@ -24,7 +24,7 @@
   changed_when: "'No update available' not in nc_installed.stdout"
 
 # todo: fix that db pwd changes every run
-- name: NextCloud | Debian | Install | Copying nextcloud config
+- name: NextCloud | Install | Copying nextcloud config
   ansible.builtin.template:
     src: 'templates/var/www/nextcloud/config/ansible.config.php.j2'
     dest: '/var/www/nextcloud/config/ansible.config.php'
@@ -35,7 +35,7 @@
   no_log: true  # since passwords are written to the file
   changed_when: false
 
-- name: NextCloud | Debian | Install | Updating file-ownership
+- name: NextCloud | Install | Updating file-ownership
   ansible.builtin.file:
     state: directory
     path: "{{ NC_CONFIG.config.path_web }}"
@@ -45,7 +45,7 @@
   changed_when: false
   tags: [upgrade]
 
-- name: NextCloud | Debian | Install | Running NextCloud installation
+- name: NextCloud | Install | Running NextCloud installation
   become_user: "{{ NC_HC.user }}"
   become: yes
   ansible.builtin.command: >
