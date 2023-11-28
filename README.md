@@ -15,6 +15,10 @@ Ansible Role to deploy NextCloud on a linux server.
 ## Install
 
 ```bash
+# latest
+ansible-galaxy role install git+https://github.com/ansibleguy/sw_nextcloud
+
+# from galaxy
 ansible-galaxy install ansibleguy.sw_nextcloud
 
 # or to custom role-path
