@@ -30,6 +30,10 @@ ansible-galaxy install ansibleguy.sw_nextcloud --roles-path ./roles
 ansible-galaxy install -r requirements.yml
 ```
 
+## Better Alternative
+
+If you are able to use a dockerized setup, it will be much easier for you to maintain the [official dockerized installation](https://docs.nextcloud.com/server/latest/admin_manual/office/example-docker.html)!
+
 ## Functionality
 
 * **Package installation**

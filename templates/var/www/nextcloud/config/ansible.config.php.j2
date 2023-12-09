@@ -3,9 +3,11 @@ $CONFIG = array (
   'trusted_domains' => [
     'localhost',
     '{{ NC_CONFIG.apache.domain }}',
-{% if 'aliases' in NC_CONFIG.apache %}
-{%   for alias in NC_CONFIG.apache.aliases %}
+{% if 'aliases' in NC_CONFIG.apache  %}
+{%   for alias in NC_CONFIG.apache.aliases | ensure_list %}
+{%     if alias != '*' %}
     '{{ alias }}',
+{%     endif %}
 {%   endfor %}
 {% endif %}
 {% if 'ip' in NC_CONFIG.apache %}
