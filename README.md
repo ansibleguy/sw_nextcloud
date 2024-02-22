@@ -14,6 +14,10 @@ Molecule Logs: [Short](https://badges.ansibleguy.net/log/molecule_sw_nextcloud_t
 **Tested:**
 * Debian 11
 
+## Consider Dockerized
+
+You may want to consider using the [dockerized Nextcloud installation](https://github.com/nextcloud/all-in-one#nextcloud-all-in-one). It might be better supported and have fewer problems on upgrades.
+
 ## Install
 
 ```bash
