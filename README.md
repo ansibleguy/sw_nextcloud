@@ -103,6 +103,8 @@ If you are able to use a dockerized setup, it will be much easier for you to mai
 
 ## Usage
 
+You want a simple Ansible GUI? Check-out my [Ansible WebUI](https://github.com/ansibleguy/webui)
+
 ### Config
 
 Define the nextcloud dictionary as needed.
