@@ -1,0 +1,9 @@
+---
+
+# ansible-playbook -K -D -i inventory/hosts.yml playbook.yml --ask-vault-pass
+
+- name: NextCloud
+  hosts: all  # should be limited
+  become: yes
+  roles:
+    - ansibleguy.sw_nextcloud

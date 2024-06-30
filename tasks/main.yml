@@ -1,0 +1,22 @@
+---
+
+- name: NextCloud | Checking for needed config
+  ansible.builtin.assert:
+    that:
+      - NC_CONFIG.hostnames | length > 0
+
+- name: NextCloud | Processing debian config
+  ansible.builtin.import_tasks: debian/main.yml
+  when: "ansible_distribution|lower in ['debian', 'ubuntu']"
+
+- name: NextCloud | Cleaning up temporary password files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ tmp_pwd_file_prefix }}_nc_mdb_root"
+    - "{{ tmp_pwd_file_prefix }}_nc_mdb"
+    - "{{ tmp_pwd_file_prefix }}_nc_adm"
+  delegate_to: localhost
+  become: false
+  changed_when: false

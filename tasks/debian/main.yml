@@ -1,0 +1,156 @@
+---
+
+- name: NextCloud | Docker
+  ansible.builtin.include_role:
+    name: ansibleguy.infra_docker_minimal
+  vars:
+    docker:
+      compose:
+        enable: true
+      nftables:
+        reload: "{{ NC_CONFIG.docker_nftables | bool }}"
+        disable_iptables: "{{ NC_CONFIG.docker_nftables | bool }}"
+  tags: docker
+  args:
+    apply:
+      tags: docker
+
+- name: NextCloud | Install MariaDB-Client
+  ansible.builtin.apt:
+    name: 'mariadb-client'
+
+- name: NextCloud | Adding directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: 0750
+    state: directory
+  loop:
+    - "{{ NC_HC.path.config }}"
+    - "{{ NC_CONFIG.path.db }}"
+    - "{{ NC_CONFIG.backup.path }}"
+
+- name: NextCloud | Adding data directory
+  ansible.builtin.file:
+    path: "{{ NC_CONFIG.path.data }}"
+    mode: 0750
+    owner: 'www-data'
+    group: 'www-data'
+    state: directory
+  register: nc_installed
+
+- name: NextCloud | Environmental Variables
+  ansible.builtin.copy:
+    content: |
+      # ansible_managed
+      # ansibleguy.sw_nextcloud
+      NEXTCLOUD_ADMIN_USER={{ NC_CONFIG.admin.user }}
+      NEXTCLOUD_ADMIN_PASSWORD={{ NC_CONFIG.admin.pwd }}
+      NEXTCLOUD_TRUSTED_DOMAINS="{{ NC_CONFIG.hostnames | join(' ') }} {{ ansible_host }}"
+      NEXTCLOUD_UPDATE=1
+      MYSQL_HOST=db
+      MYSQL_DATABASE=nextcloud
+      MYSQL_USER=nextcloud
+      MYSQL_PASSWORD={{ NC_CONFIG.db.app_pwd }}
+    dest: "{{ NC_HC.path.config }}/nextcloud.env"
+    mode: 0600
+  no_log: true
+
+- name: NextCloud | DB Environmental Variables
+  ansible.builtin.copy:
+    content: |
+      # ansible_managed
+      # ansibleguy.sw_nextcloud
+      MARIADB_ROOT_PASSWORD={{ NC_CONFIG.db.root_pwd }}
+      MARIADB_USER=nextcloud
+      MARIADB_PASSWORD={{ NC_CONFIG.db.app_pwd }}
+      MARIADB_DATABASE=nextcloud
+    dest: "{{ NC_HC.path.config }}/db.env"
+    mode: 0600
+  no_log: true
+
+- name: NextCloud | Add docker-compose config
+  ansible.builtin.copy:
+    src: 'templates/etc/nextcloud/docker-compose.yml.j2'
+    dest: "{{ NC_HC.path.config }}/docker-compose.yml"
+    mode: 0640
+  register: nc_cnf
+
+- name: NextCloud | Stop using Docker-Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ NC_HC.path.config }}"
+    state: absent
+  when: nc_cnf.changed
+
+- name: NextCloud | Start using Docker-Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ NC_HC.path.config }}"
+
+- name: NextCloud | Adding service files
+  ansible.builtin.template:
+    src: 'templates/etc/systemd/system/nextcloud.service.j2'
+    dest: '/etc/systemd/system/nextcloud.service'
+    owner: 'root'
+    group: 'root'
+    mode: 0755
+
+- name: NextCloud | Adding update script
+  ansible.builtin.template:
+    src: 'templates/usr/local/sbin/nextcloud-update.sh.j2'
+    dest: '/usr/local/sbin/nextcloud-update.sh'
+    owner: 'root'
+    group: 'root'
+    mode: 0750
+  tags: config
+
+- name: NextCloud | Adding update service
+  ansible.builtin.template:
+    src: "templates/etc/systemd/system/{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: 'root'
+    group: 'root'
+    mode: 0755
+  loop:
+    - 'nextcloud-update.service'
+    - 'nextcloud-update.timer'
+
+- name: NextCloud | Enabling/starting service
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: 'nextcloud.service'
+    enabled: true
+    state: started
+
+- name: NextCloud | Enabling/starting update timer
+  ansible.builtin.systemd:
+    name: 'nextcloud-update.timer'
+    enabled: true
+    state: started
+  when: NC_CONFIG.auto_update.enable | bool
+
+- name: NextCloud | Webserver
+  ansible.builtin.import_role:
+    name: ansibleguy.infra_nginx
+  when: NC_CONFIG.manage.webserver | bool
+  tags: [webserver]
+  vars:
+    nc_nginx_config_overrides:
+      domain: "{{ NC_CONFIG.hostnames | first }}"
+      aliases: "{{ NC_CONFIG.hostnames }}"
+      proxy:
+        proto: 'http'
+        port: 8080
+      security:
+        restrict_methods: false
+
+    nginx:
+      sites:
+        nextcloud: "{{ NC_CONFIG.nginx | combine(nc_nginx_config_overrides, recursive=true) }}"
+
+- name: NextCloud | Displaying admin-credentials
+  ansible.builtin.debug:
+    msg: "Make sure to update your 'nextcloud.db.app_pwd' and 'root_pwd' if not configured! 
+    Admin-User: '{{ NC_CONFIG.admin.user }}',
+    Admin-Password: '{{ NC_CONFIG.admin.pwd }}', 
+    Database-Root: '{{ NC_CONFIG.db.root_pwd }}', 
+    Database-App: '{{ NC_CONFIG.db.app_pwd }}'"
+  when: nc_installed.changed

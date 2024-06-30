@@ -1,0 +1,48 @@
+---
+
+# see: https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
+no_prompts: false  # to run the role non-interactively
+
+defaults_nc:
+  hostnames: []
+  version: '28.0.7'
+
+  admin:
+    user: 'admin'
+    pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_nc_adm chars=ascii_letters,digits length=' + random_pwd_length) }}"
+
+  path:
+    data: '/var/local/nextcloud'
+    db: '/var/lib/nextcloud/db'
+
+  db:
+    root_pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_nc_mdb_root chars=ascii_letters,digits length=' + random_pwd_length) }}"
+    app_pwd: "{{ lookup('password', tmp_pwd_file_prefix + '_nc_mdb chars=ascii_letters,digits length=' + random_pwd_length) }}"
+
+  manage:
+    webserver: true
+
+  auto_update:
+    enable: true
+    timer: 'Sat *-*-* 05:00:00'
+
+  backup:  # todo: implement mariadb backup job
+    enable: false
+    path: '/var/backups/nextcloud'
+    retention_days: 14
+    timer: '*-*-* 23:00:00'
+
+  docker_nftables: false
+  # reload nftables after docker start to clean the auto-created iptables rules
+  # you will have to manage the docker ruleset yourself - example:
+  #   forward: {proto: ['tcp', 'udp', 'icmp'], src: '172.18.0.0/16', dest: '172.18.0.0/16'}
+  #   output: accept
+  #   postrouting: accept & {src: '172.18.0.0/16', dest: '!= 172.18.0.0/16', masquerade: true}
+
+  nginx:
+    ssl:
+      mode: 'ca'  # existing/selfsigned/ca/letsencrypt
+      cert:
+        cn: 'NextCloud Certificate'
+      ca:
+        cn: 'NextCloud CA'

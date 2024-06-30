@@ -1,0 +1,3 @@
+---
+
+NC_CONFIG: "{{ defaults_nc | combine(nextcloud, recursive=true) }}"
