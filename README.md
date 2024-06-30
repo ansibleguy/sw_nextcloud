@@ -37,13 +37,22 @@ You want a simple Ansible GUI? Check-out my [Ansible WebUI](https://github.com/a
 Minimum example:
 ```yaml
 nextcloud:
+  hostnames: ['nextcloud.template.ansibleguy.net']
 ```
-
 
 Define the nextcloud dictionary as needed.
 
 ```yaml
 nextcloud:
+  hostnames: ['nextcloud.template.ansibleguy.net']
+  admin:
+    pwd: !vault |
+      ...
+  db:
+    app_pwd: !vault |
+      ...
+    root_pwd: !vault |
+      ...
 ```
 
 You might want to use 'ansible-vault' to encrypt your passwords:
