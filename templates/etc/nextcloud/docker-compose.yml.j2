@@ -1,0 +1,34 @@
+---
+# {{ ansible_managed }}
+# ansibleguy.sw_nextcloud
+
+networks:
+  nextcloud:
+    driver: 'bridge'
+
+services:
+  mariadb:
+    container_name: 'nextcloud-db'
+    hostname: 'db'
+    image: 'mariadb:lts'
+    env_file: "{{ NC_HC.path.config }}/db.env"
+    volumes:
+      - '{{ NC_CONFIG.path.db }}:/var/lib/mysql'
+    ports:
+      - '127.0.0.1:3306:3306'
+    restart: always
+    networks:
+      - 'nextcloud'
+
+  nextcloud:
+    container_name: 'nextcloud'
+    hostname: 'nextcloud'
+    image: 'nextcloud:{{ NC_CONFIG.version }}'
+    env_file: "{{ NC_HC.path.config }}/nextcloud.env"
+    volumes:
+      - '{{ NC_CONFIG.path.data }}:/var/www/html'
+    ports:
+      - '127.0.0.1:8080:80'
+    restart: 'always'
+    networks:
+      - 'nextcloud'

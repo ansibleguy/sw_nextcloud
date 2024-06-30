@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "### STOPPING NEXTCLOUD ###"
+systemctl stop nextcloud.service
+docker compose -f "{{ NC_HC.path.config }}/docker-compose.yml" down
+docker image prune -f
+
+echo "### UPDATING NEXTCLOUD ###"
+docker compose -f "{{ NC_HC.path.config }}/docker-compose.yml" pull --quiet --ignore-pull-failures
+
+echo "### STARTING NEXTCLOUD ###"
+systemctl start nextcloud.service
