@@ -46,7 +46,6 @@
       NEXTCLOUD_ADMIN_USER={{ NC_CONFIG.admin.user }}
       NEXTCLOUD_ADMIN_PASSWORD={{ NC_CONFIG.admin.pwd }}
       NEXTCLOUD_TRUSTED_DOMAINS="{{ NC_CONFIG.hostnames | join(' ') }} {{ ansible_host }}"
-      NEXTCLOUD_UPDATE=1
       MYSQL_HOST=db
       MYSQL_DATABASE=nextcloud
       MYSQL_USER=nextcloud
@@ -127,11 +126,16 @@
     state: started
   when: NC_CONFIG.auto_update.enable | bool
 
+- name: NextCloud | Updating proxy-settings
+  ansible.builtin.command: "docker exec --user www-data -it nextcloud /usr/local/bin/php /var/www/html/occ config:system:set {{ item }}"
+  loop:
+    - 'trusted_proxies 1 --value=172.18.0.0/16'
+    - 'overwriteprotocol --value=https'
+
 - name: NextCloud | Webserver
-  ansible.builtin.import_role:
+  ansible.builtin.include_role:
     name: ansibleguy.infra_nginx
   when: NC_CONFIG.manage.webserver | bool
-  tags: [webserver]
   vars:
     nc_nginx_config_overrides:
       domain: "{{ NC_CONFIG.hostnames | first }}"
@@ -141,10 +145,25 @@
         port: 8080
       security:
         restrict_methods: false
+      config_additions:
+        - 'location /.well-known/carddav { return 301 $scheme://$host/remote.php/dav; }'
+        - 'location /.well-known/caldav { return 301 $scheme://$host/remote.php/dav; }'
+      config_additions_root:
+        - 'proxy_hide_header X-Powered-By'
+        - 'proxy_hide_header Server'
+      headers:  # unset as they are set by the docker application
+        X-Content-Type-Options:
+        X-Frame-Options:
+        X-Xss-Protection:
+        Referrer-Policy:
 
     nginx:
       sites:
         nextcloud: "{{ NC_CONFIG.nginx | combine(nc_nginx_config_overrides, recursive=true) }}"
+  tags: [webserver]
+  args:
+    apply:
+      tags: [webserver]
 
 - name: NextCloud | Displaying admin-credentials
   ansible.builtin.debug:

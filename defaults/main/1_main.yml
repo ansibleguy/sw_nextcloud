@@ -39,6 +39,7 @@ defaults_nc:
   #   output: accept
   #   postrouting: accept & {src: '172.18.0.0/16', dest: '!= 172.18.0.0/16', masquerade: true}
 
+  # see: https://docs.nextcloud.com/server/latest/admin_manual/installation/nginx.html
   nginx:
     ssl:
       mode: 'ca'  # existing/selfsigned/ca/letsencrypt
@@ -46,3 +47,10 @@ defaults_nc:
         cn: 'NextCloud Certificate'
       ca:
         cn: 'NextCloud CA'
+
+    config:
+      client_max_body_size: '0'
+      client_body_timeout: '3600s'
+      client_body_buffer_size: '512k'
+
+    headers: {}
