@@ -167,9 +167,9 @@
 
 - name: NextCloud | Displaying admin-credentials
   ansible.builtin.debug:
-    msg: "Make sure to update your 'nextcloud.db.app_pwd' and 'root_pwd' if not configured! 
+    msg: "Make sure to update your 'nextcloud.db.app_pwd' and 'root_pwd' if not configured!
     Admin-User: '{{ NC_CONFIG.admin.user }}',
-    Admin-Password: '{{ NC_CONFIG.admin.pwd }}', 
-    Database-Root: '{{ NC_CONFIG.db.root_pwd }}', 
+    Admin-Password: '{{ NC_CONFIG.admin.pwd }}',
+    Database-Root: '{{ NC_CONFIG.db.root_pwd }}',
     Database-App: '{{ NC_CONFIG.db.app_pwd }}'"
   when: nc_installed.changed
