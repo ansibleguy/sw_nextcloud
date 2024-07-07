@@ -128,6 +128,7 @@
 
 - name: NextCloud | Updating proxy-settings
   ansible.builtin.command: "docker exec --user www-data -it nextcloud /usr/local/bin/php /var/www/html/occ config:system:set {{ item }}"
+  changed_when: false
   loop:
     - 'trusted_proxies 1 --value=172.18.0.0/16'
     - 'overwriteprotocol --value=https'
