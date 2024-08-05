@@ -139,7 +139,7 @@
   when: NC_CONFIG.manage.webserver | bool
   vars:
     nc_nginx_config_overrides:
-      domain: "{{ NC_CONFIG.hostnames | first }}"
+      domain: "{{ NC_CONFIG.hostnames | ensure_list | first }}"
       aliases: "{{ NC_CONFIG.hostnames }}"
       proxy:
         proto: 'http'

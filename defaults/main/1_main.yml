@@ -40,9 +40,10 @@ defaults_nc:
   #   postrouting: accept & {src: '172.18.0.0/16', dest: '!= 172.18.0.0/16', masquerade: true}
 
   # see: https://docs.nextcloud.com/server/latest/admin_manual/installation/nginx.html
+  # see: https://github.com/ansibleguy/infra_nginx
   nginx:
     ssl:
-      mode: 'ca'  # existing/selfsigned/ca/letsencrypt
+      mode: 'snakeoil'  # existing/selfsigned/ca/letsencrypt/snakeoil
       cert:
         cn: 'NextCloud Certificate'
       ca:
