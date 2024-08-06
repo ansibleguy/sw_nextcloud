@@ -166,11 +166,19 @@
     apply:
       tags: [webserver]
 
-- name: NextCloud | Displaying admin-credentials
+- name: NextCloud | Displaying auto-generated credentials
   ansible.builtin.debug:
-    msg: "Make sure to update your 'nextcloud.db.app_pwd' and 'root_pwd' if not configured!
+    msg: "Make sure to update your 'nextcloud.admin.pwd',
+    'nextcloud.db.app_pwd' and
+    'nextcloud.db.root_pwd' if not configured!
     Admin-User: '{{ NC_CONFIG.admin.user }}',
     Admin-Password: '{{ NC_CONFIG.admin.pwd }}',
     Database-Root: '{{ NC_CONFIG.db.root_pwd }}',
     Database-App: '{{ NC_CONFIG.db.app_pwd }}'"
-  when: nc_installed.changed
+  when: >
+    nc_installed.changed and
+    (
+    NC_CONFIG.admin.pwd == defaults_nc.admin.pwd or
+    NC_CONFIG.db.root_pwd == defaults_nc.db.root_pwd or
+    NC_CONFIG.db.app_pwd == defaults_nc.db.app_pwd
+    )
