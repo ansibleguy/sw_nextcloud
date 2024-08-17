@@ -11,6 +11,7 @@ Ansible Role to deploy dockerized NextCloud on a linux server.
 [![Ansible-Lint Test Status](https://badges.ansibleguy.net/sw_nextcloud.ansiblelint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/ansiblelint.sh.j2)
 [![Ansible Galaxy](https://badges.ansibleguy.net/galaxy.badge.svg)](https://galaxy.ansible.com/ui/standalone/roles/ansibleguy/sw_nextcloud)
 
+Molecule Logs: [Short](https://badges.ansibleguy.net/log/molecule_sw_nextcloud_test_short.log), [Full](https://badges.ansibleguy.net/log/molecule_sw_nextcloud_test.log)
 
 **Tested:**
 * Debian 12
