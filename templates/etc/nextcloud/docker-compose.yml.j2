@@ -5,6 +5,10 @@
 networks:
   nextcloud:
     driver: 'bridge'
+{% if NC_CONFIG.docker_mtu | default(none, true) is not none %}
+    driver_opts:
+      com.docker.network.driver.mtu: {{ NC_CONFIG.docker_mtu }}
+{% endif %}
 
 services:
   mariadb:

@@ -32,6 +32,7 @@ defaults_nc:
     retention_days: 14
     timer: '*-*-* 23:00:00'
 
+  docker_mtu:
   docker_nftables: false
   # reload nftables after docker start to clean the auto-created iptables rules
   # you will have to manage the docker ruleset yourself - example:
